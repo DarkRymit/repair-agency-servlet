@@ -4,6 +4,7 @@ import com.epam.finalproject.framework.data.Page;
 import com.epam.finalproject.framework.data.PageImpl;
 import com.epam.finalproject.framework.data.Pageable;
 import com.epam.finalproject.framework.data.Sort;
+import com.epam.finalproject.framework.data.jdbc.DataAccessException;
 import com.epam.finalproject.framework.data.jdbc.JdbcTemplate;
 import com.epam.finalproject.framework.data.jdbc.ResultSetExtractor;
 import com.epam.finalproject.framework.data.jdbc.RowMapper;
@@ -68,7 +69,7 @@ public class SqlAnnotationDrivenRepository<T> implements PagingAndSortingReposit
     protected <S> S save(SqlEntityDefinition<S> definition,S entity) {
         try {
             S result;
-            IdFieldDefinition idFieldDefinition = getIdColumn(entitySqlDefinition);
+            IdFieldDefinition idFieldDefinition = getIdColumn(definition);
             Method getId = idFieldDefinition.getIdGetter();
             if (getId.invoke(entity) == null) {
                 result = onInsert(definition,entity, idFieldDefinition);
@@ -77,7 +78,7 @@ public class SqlAnnotationDrivenRepository<T> implements PagingAndSortingReposit
             }
             return result;
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException(e);
         }
     }
 
@@ -120,7 +121,7 @@ public class SqlAnnotationDrivenRepository<T> implements PagingAndSortingReposit
             if (rs.next()) {
                 return rs.getLong("count(*)") > 0;
             } else {
-                throw new RuntimeException(String.format("Can't exist for entityDefinition %s", entitySqlDefinition));
+                throw new DataAccessException(String.format("Can't exist for entityDefinition %s", entitySqlDefinition));
             }
         }));
     }
@@ -137,7 +138,7 @@ public class SqlAnnotationDrivenRepository<T> implements PagingAndSortingReposit
             if (rs.next()) {
                 return rs.getLong("count(*)");
             } else {
-                throw new RuntimeException(String.format("Can't count for entityDefinition %s", entitySqlDefinition));
+                throw new DataAccessException(String.format("Can't count for entityDefinition %s", entitySqlDefinition));
             }
         }));
     }
@@ -152,7 +153,7 @@ public class SqlAnnotationDrivenRepository<T> implements PagingAndSortingReposit
         try {
             deleteById((Long) entityIdFieldDefinition.getIdGetter().invoke(entity));
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException(e);
         }
     }
 
@@ -228,7 +229,7 @@ public class SqlAnnotationDrivenRepository<T> implements PagingAndSortingReposit
         if (rs.next()) {
             return rs.getLong("COUNT(*)");
         } else {
-            throw new RuntimeException();
+            throw new DataAccessException("Cant find count field");
         }
     }
 }

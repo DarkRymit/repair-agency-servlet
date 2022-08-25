@@ -9,4 +9,8 @@ public class DataAccessException extends RuntimeException {
         super(msg, cause);
     }
 
+    public DataAccessException(Throwable cause) {
+        super(cause);
+    }
+
 }
