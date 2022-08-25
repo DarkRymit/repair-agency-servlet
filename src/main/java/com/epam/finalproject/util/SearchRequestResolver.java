@@ -36,18 +36,9 @@ public class SearchRequestResolver {
 
         String sortValue = getValueOrDefault(receiptSearchRequest.getSort(),"");
 
-        Sort sort = receiptSort.entrySet()
-                .stream()
-                .filter(e -> e.getKey().equals(sortValue))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElseThrow();
+        Sort sort = getSort(receiptSort, sortValue);
 
-        Set<ReceiptStatusEnum> receiptStatuses = Optional.ofNullable(receiptSearchRequest.getStatus())
-                .orElse(Set.of())
-                .stream()
-                .map(e -> Optional.ofNullable(receiptStatus.get(e)).orElseThrow())
-                .collect(Collectors.toSet());
+        Set<ReceiptStatusEnum> receiptStatuses = getReceiptStatusEnums(receiptSearchRequest.getStatus());
 
         return ReceiptSearch.builder()
                 .receiptStatuses(receiptStatuses)
@@ -56,22 +47,23 @@ public class SearchRequestResolver {
                 .pageRequest(PageRequest.of(getValueOrZero(receiptSearchRequest.getPage()), getValueOrDefault(receiptSearchRequest.getCount(), 5), sort))
                 .build();
     }
-    public ReceiptWithCustomerSearch resolve(ReceiptWithCustomerSearchRequest receiptSearchRequest, User customer) {
 
-        String sortValue = getValueOrDefault(receiptSearchRequest.getSort(),"");
-
-        Sort sort = receiptSort.entrySet()
+    private Sort getSort(Map<String, Sort> receiptSort, String sortValue) {
+        return receiptSort.entrySet()
                 .stream()
                 .filter(e -> e.getKey().equals(sortValue))
                 .map(Map.Entry::getValue)
                 .findFirst()
                 .orElseThrow();
+    }
 
-        Set<ReceiptStatusEnum> receiptStatuses = Optional.ofNullable(receiptSearchRequest.getStatus())
-                .orElse(Set.of())
-                .stream()
-                .map(e -> Optional.ofNullable(receiptStatus.get(e)).orElseThrow())
-                .collect(Collectors.toSet());
+    public ReceiptWithCustomerSearch resolve(ReceiptWithCustomerSearchRequest receiptSearchRequest, User customer) {
+
+        String sortValue = getValueOrDefault(receiptSearchRequest.getSort(),"");
+
+        Sort sort = getSort(receiptSort, sortValue);
+
+        Set<ReceiptStatusEnum> receiptStatuses = getReceiptStatusEnums(receiptSearchRequest.getStatus());
 
         return ReceiptWithCustomerSearch.builder()
                 .receiptStatuses(receiptStatuses)
@@ -80,22 +72,22 @@ public class SearchRequestResolver {
                 .pageRequest(PageRequest.of(getValueOrZero(receiptSearchRequest.getPage()), getValueOrDefault(receiptSearchRequest.getCount(), 5), sort))
                 .build();
     }
-    public ReceiptWithMasterSearch resolve(ReceiptWithMasterSearchRequest receiptSearchRequest, User master) {
 
-        String sortValue = getValueOrDefault(receiptSearchRequest.getSort(),"");
-
-        Sort sort = receiptSort.entrySet()
-                .stream()
-                .filter(e -> e.getKey().equals(sortValue))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElseThrow();
-
-        Set<ReceiptStatusEnum> receiptStatuses = Optional.ofNullable(receiptSearchRequest.getStatus())
+    private Set<ReceiptStatusEnum> getReceiptStatusEnums(Set<String> receiptSearchRequest) {
+        return Optional.ofNullable(receiptSearchRequest)
                 .orElse(Set.of())
                 .stream()
                 .map(e -> Optional.ofNullable(receiptStatus.get(e)).orElseThrow())
                 .collect(Collectors.toSet());
+    }
+
+    public ReceiptWithMasterSearch resolve(ReceiptWithMasterSearchRequest receiptSearchRequest, User master) {
+
+        String sortValue = getValueOrDefault(receiptSearchRequest.getSort(),"");
+
+        Sort sort = getSort(receiptSort, sortValue);
+
+        Set<ReceiptStatusEnum> receiptStatuses = getReceiptStatusEnums(receiptSearchRequest.getStatus());
 
         return ReceiptWithMasterSearch.builder()
                 .receiptStatuses(receiptStatuses)
@@ -109,12 +101,7 @@ public class SearchRequestResolver {
 
         String sortValue = Optional.ofNullable(userSearchRequest.getSort()).orElse("");
 
-        Sort sort = userSort.entrySet()
-                .stream()
-                .filter(e -> e.getKey().equals(sortValue))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElseThrow();
+        Sort sort = getSort(userSort, sortValue);
 
         return UserSearch.builder()
                 .username(userSearchRequest.getUsername())
@@ -126,12 +113,7 @@ public class SearchRequestResolver {
 
         String sortValue = getValueOrDefault(masterSearchRequest.getSort(),"");
 
-        Sort sort = userSort.entrySet()
-                .stream()
-                .filter(e -> e.getKey().equals(sortValue))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElseThrow();
+        Sort sort = getSort(userSort, sortValue);
 
         return MasterSearch.builder()
                 .username(masterSearchRequest.getUsername())
