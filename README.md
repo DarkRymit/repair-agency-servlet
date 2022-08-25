@@ -1,4 +1,4 @@
-# Repair Agency Spring
+# Repair Agency Servlet
 Ремонтне агенство
 
 Існують ролі: менеджер, майстер, користувач.
