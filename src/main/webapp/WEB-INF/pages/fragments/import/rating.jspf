@@ -1,0 +1,1 @@
+<link href="${pageContext.request.contextPath}/static/css/rating.css" rel="stylesheet"/>

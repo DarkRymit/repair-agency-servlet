@@ -1,0 +1,31 @@
+<%@ include file="/WEB-INF/pages/fragments/taglib.jspf" %>
+<div class="container ms-0">
+    <div class="row">
+        <div class="col-10">
+            <table class="table table-bordered border-primary">
+                <thead class="table-dark align-middle">
+                <tr class="head" id="receiptHead1">
+                    <th scope="col">ID</th>
+                    <th scope="col">Master</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Rate</th>
+                </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                <jsp:useBean id="responses" scope="request" type="com.epam.finalproject.framework.data.Page<com.epam.finalproject.dto.ReceiptResponseDTO>"/>
+                <c:forEach var="response" items="${responses.getContent()}">
+                    <tr class="body table-light" id="receiptBody">
+                        <t-d:response-id response="${response}"/>
+                        <t-d:receipt-master receipt="${response.receipt}"/>
+                        <t-d:receipt-category receipt="${response.receipt}"/>
+                        <t-d:receipt-price receipt="${response.receipt}"/>
+                        <t-d:response-rating response="${response}"/>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+            <ext:pagination page="${responses}"/>
+        </div>
+    </div>
+</div>

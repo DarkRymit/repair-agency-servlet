@@ -1,0 +1,27 @@
+<%@ include file="/WEB-INF/pages/fragments/taglib.jspf" %>
+<jsp:useBean id="wallets" scope="request" type="com.epam.finalproject.framework.data.Page<com.epam.finalproject.dto.WalletDTO>"/>
+<div class="container ms-0">
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <ext:pagination page="${wallets}"/>
+                </div>
+            </div>
+            <div class="row">
+                <c:forEach var="wallet" items="${wallets.getContent()}">
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Wallet</h5>
+                                <h6 class="card-subtitle">${wallet.name}</h6>
+                                <i class="card-text">${wallet.moneyAmount}</i>
+                                <i class="card-text">${wallet.moneyCurrency.code}</i>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
+    </div>
+</div>

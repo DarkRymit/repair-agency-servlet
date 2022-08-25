@@ -1,0 +1,150 @@
+<jsp:useBean id="search" scope="request" type="com.epam.finalproject.request.search.ReceiptWithMasterSearchRequest"/>
+<%@ include file="/WEB-INF/pages/fragments/taglib.jspf" %>
+<div class="container ms-0">
+    <div class="row">
+        <div class="col-2">
+            <form id="search-form" method="get" <ext:action path="/master/orders"/> >
+                <ul class="list-group text-center">
+                    <li class="list-group-item">
+                        <input class="btn btn-primary btn-user btn-block search-submit" type="submit"
+                               value="Apply">
+                    </li>
+                    <li class="list-group-item">
+                        <label for="sort_select"> Sort by </label>
+                        <select class="form-select" id="sort_select" name="sort">
+                            <option <ext:selected test="${search.sort=='create-time'&& search.sort==''}"/>
+                                    value="create-time">
+                                creation time
+                            </option>
+                            <option <ext:selected test="${search.sort=='status'}"/> value="status">status</option>
+                            <option <ext:selected test="${search.sort=='price'}"/> value="price">price</option>
+                        </select>
+                    </li>
+
+                    <li class="list-group-item list-group-item-secondary">
+                        Filter by
+                    </li>
+
+                    <li class="list-group-item">
+                        <button class="btn btn-primary" data-bs-target="#collapseStatus"
+                                data-bs-toggle="collapse"
+                                type="button">
+                            Status
+                        </button>
+                        <div class="collapse px-auto ${(search.status!= null && !search.status.isEmpty())? 'show' : ''} "
+                             id="collapseStatus">
+                            <div class="list-group">
+                                <div class="form-check list-group-item list-group-item-action">
+                                    <input class="form-check-input" id="flexCheckCreated"
+                                           name="status"
+                                    <ext:checked test="${search.status.contains('created')}"/>
+                                           type="checkbox"
+                                           value="created">
+                                    <label class="form-check-label" for="flexCheckCreated">
+                                        Created
+                                    </label>
+                                </div>
+                                <div class="form-check list-group-item list-group-item-action">
+                                    <input class="form-check-input" id="flexCheckWaitForPayment"
+                                           name="status"
+                                    <ext:checked test="${search.status.contains('wait')}"/>
+                                           type="checkbox"
+                                           value="wait">
+                                    <label class="form-check-label" for="flexCheckWaitForPayment">
+                                        Wait for payment
+                                    </label>
+                                </div>
+                                <div class="form-check list-group-item list-group-item-action">
+                                    <input class="form-check-input" id="flexCheckPaid" name="status"
+                                    <ext:checked test="${search.status.contains('paid')}"/>
+                                           type="checkbox"
+                                           value="paid">
+                                    <label class="form-check-label" for="flexCheckPaid">
+                                        Paid
+                                    </label>
+                                </div>
+                                <div class="form-check list-group-item list-group-item-action">
+                                    <input class="form-check-input" id="flexCheckInWork" name="status"
+                                    <ext:checked test="${search.status.contains('work')}"/>
+                                           type="checkbox"
+                                           value="work">
+                                    <label class="form-check-label" for="flexCheckInWork">
+                                        In work
+                                    </label>
+                                </div>
+                                <div class="form-check list-group-item list-group-item-action">
+                                    <input class="form-check-input" id="flexCheckDone" name="status"
+                                    <ext:checked test="${search.status.contains('done')}"/>
+                                           type="checkbox"
+                                           value="done">
+                                    <label class="form-check-label" for="flexCheckDone">
+                                        Done
+                                    </label>
+                                </div>
+                                <div class="form-check list-group-item list-group-item-action">
+                                    <input class="form-check-input" id="flexCheckCanceled" name="status"
+                                    <ext:checked test="${search.status.contains('cancel')}"/>
+                                           type="checkbox"
+                                           value="cancel">
+                                    <label class="form-check-label" for="flexCheckCanceled">
+                                        Canceled
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <button class="btn btn-primary" data-bs-target="#collapseCustomer"
+                                data-bs-toggle="collapse"
+                                type="button">
+                            Customer
+                        </button>
+                        <div class="collapse px-auto ${(search.customer!= null && !search.customer.isBlank())?'show' : ''}" id="collapseCustomer">
+                            <div class="list-group">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon2">@</span>
+                                    <input class="form-control" name="customer" placeholder="Username"
+                                           value="${search.customer}"
+                                           type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div class="col-10">
+            <table class="table table-bordered border-primary">
+                <thead class="table-dark align-middle">
+                <tr class="head" id="receiptHead">
+                    <th scope="col">ID</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Creation time</th>
+                    <th scope="col">Delivery</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                <jsp:useBean id="receipts" scope="request" type="com.epam.finalproject.framework.data.Page<com.epam.finalproject.dto.ReceiptDTO>"/>
+                <c:forEach var="receipt" items="${receipts.getContent()}">
+                    <tr class="body table-light" id="receiptBody">
+                        <t-d:receipt-id receipt="${receipt}"/>
+                        <t-d:receipt-user receipt="${receipt}"/>
+                        <t-d:receipt-status receipt="${receipt}"/>
+                        <t-d:receipt-category receipt="${receipt}"/>
+                        <t-d:receipt-price receipt="${receipt}"/>
+                        <t-d:receipt-creationDate receipt="${receipt}"/>
+                        <t-d:receipt-delivery receipt="${receipt}"/>
+                        <jsp:useBean id="flows" scope="request" type="java.util.List<com.epam.finalproject.dto.ReceiptStatusFlowDTO>"/>
+                        <t-d:receipt-action receipt="${receipt}" flows="${flows}"/>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+            <ext:pagination page="${receipts}"/>
+        </div>
+    </div>
+</div>

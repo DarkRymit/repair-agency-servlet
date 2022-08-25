@@ -1,0 +1,27 @@
+<%--=========================================================================== 
+JSTL core tag library.
+===========================================================================--%> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%--=========================================================================== 
+JSTL functions tag library.
+===========================================================================--%> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+<%--=========================================================================== 
+JSTL i18n tag library.
+===========================================================================--%> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib prefix="ext" tagdir="/WEB-INF/tags"%>
+
+<%@ taglib prefix="t-d" tagdir="/WEB-INF/tags/fragment/table-data"%>
+
+<%@ taglib prefix="sec" uri="/WEB-INF/tld/security"%>
+
+<%@ taglib prefix="frmt" uri="/WEB-INF/tld/format"%>
+<c:set var="locale" value="${sessionScope.get('SessionLocaleResolver.LOCALE')}" />
+
+<fmt:setLocale value="${locale.language.equals('uk')?'ua':locale.language}"/>
+
+<fmt:setBundle basename="messages" />

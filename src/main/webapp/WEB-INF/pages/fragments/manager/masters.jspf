@@ -1,0 +1,85 @@
+<%@ include file="/WEB-INF/pages/fragments/taglib.jspf" %>
+<jsp:useBean id="search" scope="request" type="com.epam.finalproject.request.search.MasterSearchRequest"/>
+<jsp:useBean id="masters" scope="request"
+             type="com.epam.finalproject.framework.data.Page<com.epam.finalproject.dto.UserDTO>"/>
+<div class="container ms-0">
+    <div class="row">
+        <div class="col-2">
+            <form id="search-form" method="get" <ext:action path="/manager/masters"/> >
+                <ul class="list-group text-center">
+                    <li class="list-group-item">
+                        <input class="btn btn-primary btn-user btn-block search-submit" type="submit"
+                               value="Apply">
+                    </li>
+                    <li class="list-group-item">
+                        <label for="sort_select"> Sort by </label>
+                        <select class="form-select" id="sort_select" name="sort">
+                            <option <ext:selected test="${search.sort=='username'&&search.sort==''}"/>>
+                                username
+                            </option>
+                            <option <ext:selected test="${search.sort=='name'}"/> >
+                                name
+                            </option>
+                        </select>
+                    </li>
+                    <li class="list-group-item list-group-item-secondary">
+                        Filter by
+                    </li>
+                    <li class="list-group-item">
+                        <button class="btn btn-primary" data-bs-target="#collapseUsername"
+                                data-bs-toggle="collapse"
+                                type="button">
+                            username
+                        </button>
+                        <div class="collapse px-auto ${(search.username!= null && !search.username.isBlank()) ? 'show' : ''}" id="collapseUsername">
+                            <div class="list-group">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">@</span>
+                                    <input class="form-control" name="username" placeholder="Username"
+                                           value="${search.username}"
+                                           type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div class="col-10">
+            <table class="table table-bordered border-primary">
+                <thead class="table-dark align-middle">
+                <tr class="head" id="userHead">
+                    <th scope="col">Username</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Roles</th>
+                </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                <c:forEach var="master" items="${masters.getContent()}">
+                    <tr class="body table-light" id="userBody">
+                        <td>
+                            <a class=" text-dark text-decoration-none"
+                                    <ext:href path="/user/${master.id}/profile"/>
+                            >@${master.username}</a>
+                        </td>
+                        <td>${master.firstName}</td>
+                        <td>${master.lastName}</td>
+                        <td>${master.phone}</td>
+                        <td>
+                            <ul class="list-group">
+                                <c:forEach var="role" items="${master.roles}">
+                                    <li class="list-group-item">${role.name}</li>
+                                </c:forEach>
+                            </ul>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+            <ext:pagination page="${masters}"/>
+        </div>
+    </div>
+
+</div>

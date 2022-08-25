@@ -1,0 +1,13 @@
+<Context>
+    <Resource name="jdbc/MysqlHikari" auth="Container"
+              factory="com.zaxxer.hikari.HikariJNDIFactory"
+              type="javax.sql.DataSource"
+              driverClassName="com.mysql.cj.jdbc.Driver"
+              minimumIdle="5"
+              maximumPoolSize="10"
+              connectionTimeout="300000"
+              jdbcUrl="jdbc:mysql://localhost:3306/repair_agency_01?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;serverTimezone=UTC"
+              dataSource.implicitCachingEnabled="true"
+              dataSource.user="root"
+              dataSource.password="!Password404!" />
+</Context>

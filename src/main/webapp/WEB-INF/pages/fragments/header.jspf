@@ -1,0 +1,77 @@
+<%@ include file="/WEB-INF/pages/fragments/taglib.jspf" %>
+<nav class="navbar fadeInDown navbar-expand-lg navbar-dark fixed-top bg-dark">
+    <div class="container-fluid ">
+        <a class="navbar-brand" href="#"><fmt:message key="main.title"/></a>
+        <button aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+                data-bs-target="#navbarText" data-bs-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto text-center">
+                <li class="nav-item">
+                    <a class="nav-link " <ext:href path="/"/>><fmt:message key="header.main"/></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" <ext:href path="/category"/>><fmt:message key="header.services"/></a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto text-center">
+                <li class="nav-item dropdown py-lg-0 pb-1">
+                    <a aria-expanded="false" class="nav-link" data-bs-toggle="dropdown" data-bs-trigger="hover focus"
+                       href="#" id="navbarDropdownMenu1Link" role="button">
+                        <fmt:message key="header.lang"/>
+                    </a>
+                    <ul aria-labelledby="navbarDropdownMenu1Link"
+                        class="dropdown-menu  dropdown-menu-lg-end bg-secondary text-center">
+                        <li><a class="dropdown-item" <ext:hrefReplaceParam name='lang' value='uk'/> ><fmt:message key="header.lang.uk"/></a>
+                        </li>
+                        <li><a class="dropdown-item" <ext:hrefReplaceParam name='lang' value='en'/> ><fmt:message key="header.lang.en"/></a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown py-lg-0 pb-1">
+                    <a aria-expanded="false" class="nav-link" data-bs-toggle="dropdown" data-bs-trigger="hover focus"
+                       href="#" id="navbarDropdownMenu2Link" role="button">
+                        <fmt:message key="header.currency"/>
+                    </a>
+                    <ul aria-labelledby="navbarDropdownMenu2Link"
+                        class="dropdown-menu  dropdown-menu-lg-end bg-secondary text-center">
+                        <li><a class="dropdown-item" <ext:hrefReplaceParam name='currency' value='UAH'/> ><fmt:message key="header.currency.uah"/></a>
+                        </li>
+                        <li><a class="dropdown-item" <ext:hrefReplaceParam name='currency' value='USD'/> ><fmt:message key="header.currency.usd"/></a></li>
+                    </ul>
+                </li>
+                <li class="nav-item px-lg-1 py-lg-0 py-1">
+                    <sec:authorize expr="isAuthenticated()">
+                        <a aria-expanded="false" class="nav-link" data-bs-toggle="dropdown"
+                           data-bs-trigger="hover focus" href="#"
+                           id="mainUserBar" role="button">
+                            <sec:authentication expr="name"/>
+                        </a>
+                        <ul aria-labelledby="navbarDropdownMenu1Link"
+                            class="dropdown-menu  dropdown-menu-lg-end bg-secondary text-center">
+                            <sec:authorize expr="hasRole(CUSTOMER)">
+                                <li><a class="dropdown-item btn nav-link"
+                                        <ext:href path="/customer/orders"/>><fmt:message key="header.cabinet"/></a></li>
+                            </sec:authorize>
+                            <sec:authorize expr="hasRole(MASTER)">
+                                <li><a class="dropdown-item btn nav-link"
+                                        <ext:href path="/master/orders"/>><fmt:message key="header.cabinet"/></a></li>
+                            </sec:authorize>
+                            <sec:authorize expr="hasRole(MANAGER)">
+                                <li><a class="dropdown-item btn nav-link"
+                                        <ext:href path="/manager/orders"/>><fmt:message key="header.cabinet"/></a></li>
+                            </sec:authorize>
+                            <li><a class="dropdown-item btn btn-outline-primary nav-link"
+                                    <ext:href path="/auth/signout"/>><fmt:message key="header.signOut"/></a></li>
+                        </ul>
+                    </sec:authorize>
+                    <sec:authorize expr="isAnonymous()">
+                        <a class="btn btn-outline-primary nav-link" <ext:href path="/auth/signin"/>>
+                            <fmt:message key="header.signIn"/></a>
+                    </sec:authorize>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>

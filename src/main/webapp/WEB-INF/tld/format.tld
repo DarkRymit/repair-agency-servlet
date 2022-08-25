@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
+    <tlib-version>1.2</tlib-version>
+    <short-name>format</short-name>
+    <uri>/WEB-INF/tld/format</uri>
+    <tag>
+        <name>dataTime</name>
+        <tag-class>com.epam.finalproject.tag.DataFormatTagHandler</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>dateTime</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.time.ZonedDateTime</type>
+        </attribute>
+    </tag>
+</taglib>
