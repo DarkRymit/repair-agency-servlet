@@ -18,8 +18,6 @@ import org.modelmapper.ModelMapper;
 
 import java.time.Instant;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -47,16 +45,19 @@ public class UserServiceImpl implements UserService {
     public User signUpNewUserAccount(SignUpRequest form) {
         TransactionStatus ts = transactionManager.getTransaction();
         User result;
+        Role unverified = roleRepository.findByName(RoleEnum.UNVERIFIED).orElseThrow();
+        Role customer = roleRepository.findByName(RoleEnum.CUSTOMER).orElseThrow();
         try {
-            User user = getSetUpAndSave(UserUtil::createWithInitializedContainers, u -> {
-                modelMapper.map(form, u);
-                u.setPassword(passwordEncoder.encode(form.getPassword()));
-                u.addRole(roleRepository.findByName(RoleEnum.UNVERIFIED).orElseThrow());
-                u.setCreationDate(Instant.now());
-                u.setLastModifiedDate(Instant.now());
-            });
-            roleRepository.addRoleForUser(roleRepository.findByName(RoleEnum.UNVERIFIED).orElseThrow(),user);
-            roleRepository.addRoleForUser(roleRepository.findByName(RoleEnum.CUSTOMER).orElseThrow(),user);
+            User user = UserUtil.createWithInitializedContainers();
+            modelMapper.map(form, user);
+            user.setPassword(passwordEncoder.encode(form.getPassword()));
+            user.addRole(unverified);
+            user.addRole(customer);
+            user.setCreationDate(Instant.now());
+            user.setLastModifiedDate(Instant.now());
+            userRepository.save(user);
+            roleRepository.addRoleForUser(unverified, user);
+            roleRepository.addRoleForUser(customer, user);
             result = user;
         } catch (Exception e) {
             transactionManager.rollback(ts);
@@ -77,16 +78,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUserHaveRoleWithName(User user, RoleEnum roleName) {
-        return user.getRoles().stream().map(Role::getName).anyMatch(eRole -> eRole.equals(roleName));
-    }
-
-    @Override
-    public boolean isUserNotVerified(User user) {
-        return isUserHaveRoleWithName(user,RoleEnum.UNVERIFIED);
-    }
-
-    @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -94,13 +85,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO findById(Long id) {
         return constructDTO(userRepository.findById(id).orElseThrow());
-    }
-
-    private User getSetUpAndSave(Supplier<User> userSupplier, Consumer<User> userConsumer) {
-        User user = userSupplier.get();
-        userConsumer.accept(user);
-        userRepository.save(user);
-        return user;
     }
 
     public UserDTO constructDTO(User user) {
