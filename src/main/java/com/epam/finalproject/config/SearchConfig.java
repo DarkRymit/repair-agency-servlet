@@ -4,7 +4,6 @@ import com.epam.finalproject.framework.beans.annotation.Bean;
 import com.epam.finalproject.framework.beans.annotation.Configuration;
 import com.epam.finalproject.framework.data.Sort;
 import com.epam.finalproject.model.entity.enums.ReceiptStatusEnum;
-import lombok.AllArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -9,7 +9,6 @@ import com.epam.finalproject.framework.beans.factory.support.DefaultBeanDefiniti
 import com.epam.finalproject.framework.beans.factory.support.ManualConfigurableBeanFactory;
 import com.epam.finalproject.framework.context.support.AbstractApplicationContext;
 import com.epam.finalproject.framework.context.support.ApplicationContextHolder;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -45,7 +44,6 @@ public class ManualConfigurableApplicationContext extends AbstractApplicationCon
     }
 
 
-    @SneakyThrows
     public void setup() {
         ApplicationContextHolder.setContext(this);
         registerBean(DefaultBeanDefinition.builder()
