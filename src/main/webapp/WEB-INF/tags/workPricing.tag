@@ -16,6 +16,9 @@
     <c:when test="${upper == null}">
         <fmt:message key="work.price.up"/> <fmt:formatNumber value="${upper}" minFractionDigits="0"/>
     </c:when>
+    <c:when test="${lower.compareTo(upper)==0}">
+        <fmt:formatNumber value="${lower}" minFractionDigits="0"/>
+    </c:when>
     <c:otherwise>
         <fmt:message
                 key="work.price.fromUp.from"/> <fmt:formatNumber value="${lower}" minFractionDigits="0"/>
