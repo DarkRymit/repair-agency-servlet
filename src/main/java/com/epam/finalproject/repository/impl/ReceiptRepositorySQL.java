@@ -67,6 +67,7 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
             RECEIPT_ALIAS + "," +
                     " st.id as st_id , st.name as st_name " + "," +
                     USER_MASTER_ALIAS + "," +
+                    REPAIR_CATEGORY_ALIAS + "," +
                     USER_ALIAS + "," +
                     "  d.receipt_id as d_receipt_id , d.city as d_city , d.country as d_country ," +
                     " d.local_address as d_local_address , d.postal_code as d_postal_code , d.state as d_state " + "," +
@@ -99,6 +100,7 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
             }
             ReceiptItem receiptItem = entityMapper.mapAs(rs, ReceiptItem.class, "i");
             receiptItem.setRepairWork(entityMapper.mapAs(rs, RepairWork.class, "rw"));
+            receiptItem.setReceipt(receipt[0]);
             receipt[0].getItems().add(receiptItem);
         });
         return Optional.of(receipt[0]);
@@ -176,6 +178,7 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
                 ps -> ps.setLong(1, receipt.getId()), rs1 -> {
                     ReceiptItem item = entityMapper.mapAs(rs1, ReceiptItem.class, "i");
                     item.setRepairWork(entityMapper.mapAs(rs1, RepairWork.class, "rw"));
+                    item.setReceipt(receipt);
                     receipt.getItems().add(item);
                 });
         return receipt;
