@@ -3,6 +3,7 @@ package com.epam.finalproject.service;
 import com.epam.finalproject.dto.WalletDTO;
 import com.epam.finalproject.framework.data.Page;
 import com.epam.finalproject.framework.data.Pageable;
+import com.epam.finalproject.request.AddMoneyRequest;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface WalletService {
     Page<WalletDTO> findAll(Pageable pageable);
 
     WalletDTO findById(Long id);
+
+    WalletDTO addMoney(AddMoneyRequest request);
 }

@@ -163,15 +163,15 @@
                                 <c:if test="${order.status.name.equals('DONE')}">
                                     <c:set var="response" scope="request" value="${requestScope.response}"/>
                                     <c:if test="${response!=null}">
-                                        <strong><fmt:message key="order.responce.name"/></strong>
+                                        <strong><fmt:message key="order.response.name"/></strong>
                                         <ul class="list-group">
                                             <li class="list-group-item">
-                                                <strong><fmt:message key="order.responce.text.name"/></strong>
+                                                <strong><fmt:message key="order.response.text.name"/></strong>
                                                 <span>:</span>
                                                     ${response.text}
                                             </li>
                                             <li class="list-group-item">
-                                                <strong><fmt:message key="order.responce.rating.name"/></strong>
+                                                <strong><fmt:message key="order.response.rating.name"/></strong>
                                                 <span>:</span>
                                                 <c:forEach begin="0" end="${response.rating}">
                                                     <i class="fa-solid fa-star"></i>
@@ -180,19 +180,19 @@
                                         </ul>
                                     </c:if>
                                     <c:if test="${response==null and order.user.username == sec:name()}">
-                                        <strong> <fmt:message key="order.responce.create.name"/></strong>
+                                        <strong> <fmt:message key="order.response.create.name"/></strong>
                                         <form method="post" id="form" <ext:action
                                                 path="/order/${order.id.toString()}/response/create"/> >
                                             <ul class="list-group">
                                                 <li class="list-group-item">
                                                     <div class="input-group">
-                                                        <strong class="input-group-text"><fmt:message key="order.responce.text.name"/></strong>
+                                                        <strong class="input-group-text"><fmt:message key="order.response.text.name"/></strong>
                                                         <textarea maxlength="255" aria-label="Note" class="form-control"
                                                                   name="text" id="text"></textarea>
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">
-                                                    <strong><fmt:message key="order.responce.rating.name"/></strong>
+                                                    <strong><fmt:message key="order.response.rating.name"/></strong>
                                                     <span>:</span>
                                                     <div class="rating">
                                                         <input class="star star-5" id="star-5" type="radio" value="5"
@@ -218,7 +218,7 @@
                                                     </div>
                                                 </li>
                                             </ul>
-                                            <button type="submit" class="btn btn-primary" id="submit"><fmt:message key="order.responce.submit"/></button>
+                                            <button type="submit" class="btn btn-primary" id="submit"><fmt:message key="order.response.submit"/></button>
                                         </form>
                                     </c:if>
                                 </c:if>

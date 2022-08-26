@@ -36,7 +36,7 @@
                                 <div class="form-floating mb-2">
                                     <input type="text" id="username" name="username"
                                            class="form-control form-control-user mb-2" required placeholder="Username">
-                                    <label for="phone">Username</label>
+                                    <label for="username">Username</label>
                                 </div>
                                 <c:if test="${requestScope.usernameError}">
                                     <div class="alert alert-danger fadeIn" id="usernameError" role="alert">

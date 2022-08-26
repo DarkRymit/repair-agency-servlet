@@ -6,7 +6,9 @@ import com.epam.finalproject.framework.data.Pageable;
 import com.epam.finalproject.framework.web.annotation.Service;
 import com.epam.finalproject.model.entity.Wallet;
 import com.epam.finalproject.repository.WalletRepository;
+import com.epam.finalproject.request.AddMoneyRequest;
 import com.epam.finalproject.service.WalletService;
+import org.javamoney.moneta.Money;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
@@ -41,6 +43,17 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public WalletDTO findByNameAndUsername(String name, String username) {
         return constructDTO(walletRepository.findDistinctByNameAndUser_Username(name, username).orElseThrow());
+    }
+
+    @Override
+    public WalletDTO addMoney(AddMoneyRequest request) {
+        Wallet wallet = walletRepository.findById(request.getId()).orElseThrow();
+        Money walletMoney = Money.of(wallet.getMoneyAmount(), wallet.getMoneyCurrency().getCode());
+        Money addMoney = Money.of(request.getMoneyToAdd(), wallet.getMoneyCurrency().getCode());
+        Money walletRemainder = walletMoney.add(addMoney);
+        wallet.setMoneyAmount(walletRemainder.getNumberStripped());
+        wallet = walletRepository.save(wallet);
+        return constructDTO(wallet);
     }
 
     @Override

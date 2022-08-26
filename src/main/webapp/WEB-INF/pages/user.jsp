@@ -61,20 +61,55 @@
                                         </ul>
                                     </li>
                                     <sec:authorize expr="hasRole(MANAGER)">
-                                        <li class="list-group-item">
-                                            <strong><fmt:message key="user.wallets"/></strong>
-                                            <span>:</span>
-                                            <br>
-                                            <ul class="list-group">
-                                                <c:forEach var="wallet" items="${user.wallets}">
-                                                    <li class="list-group-item">
-                                                        <strong>${wallet.name}</strong>
-                                                        <strong><fmt:formatNumber value="${wallet.moneyAmount}" minFractionDigits="0"/></strong>
-                                                        <strong>${wallet.moneyCurrency.code}</strong>
-                                                    </li>
-                                                </c:forEach>
-                                            </ul>
-                                        </li>
+                                        <c:if test="${user.roles.stream().map(r -> r.name).filter(n -> n.equals('CUSTOMER')).findFirst().orElse(null) != null}">
+                                            <li class="list-group-item">
+                                                <strong><fmt:message key="user.wallets"/></strong>
+                                                <span>:</span>
+                                                <br>
+                                                <ul class="list-group">
+                                                    <c:forEach var="wallet" items="${user.wallets}">
+                                                        <li class="list-group-item">
+                                                            <strong>${wallet.name}</strong>
+                                                            <strong><fmt:formatNumber value="${wallet.moneyAmount}"
+                                                                                      minFractionDigits="0"/></strong>
+                                                            <strong>${wallet.moneyCurrency.code}</strong>
+                                                        </li>
+                                                    </c:forEach>
+                                                </ul>
+                                            </li>
+
+                                            <li class="list-group-item">
+                                                <form method="post" <ext:action path="/wallet/addMoney"/> >
+                                                    <input hidden name="redirectUrl" value="/user/${user.id}/profile">
+                                                    <label for="walletId"><fmt:message
+                                                            key="wallet.price.change.pickUp"/> </label>
+                                                    <select
+                                                            class="form-select" id="walletId" name="id">
+                                                        <c:forEach var="wallet" items="${user.wallets}">
+                                                            <option value="${wallet.id}">
+                                                                <strong>${wallet.name}</strong>
+                                                                <strong><fmt:formatNumber value="${wallet.moneyAmount}"
+                                                                                          minFractionDigits="0"/></strong>
+                                                                <strong>${wallet.moneyCurrency.code}</strong>
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                    <div class="form-floating  mb-2">
+                                                        <input class="form-control price"
+                                                               id="moneyToAdd"
+                                                               name="moneyToAdd"
+                                                               required
+                                                               type="number">
+                                                        <label for="moneyToAdd">
+                                                            <fmt:message key="wallet.price.change.add.name"/>
+                                                        </label>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary" id="submit">
+                                                        <fmt:message
+                                                                key="wallet.price.change.add.submit"/></button>
+                                                </form>
+                                            </li>
+                                        </c:if>
                                     </sec:authorize>
                                 </ul>
                             </div>
