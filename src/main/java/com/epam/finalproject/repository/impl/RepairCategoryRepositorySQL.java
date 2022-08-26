@@ -12,7 +12,6 @@ import com.epam.finalproject.framework.data.sql.query.SqlEntityQueryGenerator;
 import com.epam.finalproject.model.entity.RepairCategory;
 import com.epam.finalproject.model.entity.RepairCategoryLocalPart;
 import com.epam.finalproject.model.entity.RepairWork;
-import com.epam.finalproject.model.entity.RepairWorkPrice;
 import com.epam.finalproject.repository.RepairCategoryRepository;
 import org.slf4j.Logger;
 
@@ -69,7 +68,7 @@ public class RepairCategoryRepositorySQL extends SqlAnnotationDrivenRepository<R
     public Optional<RepairCategoryLocalPart> findFirstLocalPartByCategory_IdAndLanguage_Lang(Long categoryId,
             String lang) {
         log.trace("Lang {}", lang);
-        return template.query(queryGenerator.selectQuery(RepairWorkPrice.class, new SqlAliasTableNaming(
+        return template.query(queryGenerator.selectQuery(RepairCategoryLocalPart.class, new SqlAliasTableNaming(
                         "lp")) + " LEFT JOIN app_locales as l on lp.language_id = l.id where lp.category_id = ? and l.lang = ?",
                 pss -> {
                     pss.setLong(1, categoryId);
