@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.epam.finalproject.framework.data.sql.mapping.util.SqlUtil.getAliasColumnName;
 import static com.epam.finalproject.framework.data.sql.mapping.util.SqlUtil.getFullColumnName;
 
 @Component
@@ -62,7 +63,7 @@ public class SqlEntityQueryGenerator {
         query.append(SELECT)
                 .append(" ")
                 .append(definitionsToWrite.stream()
-                        .map(definition -> getFullColumnName(naming.getTableName(), definition.getColumnName()))
+                        .map(definition -> getFullColumnName(naming.getTableName(), definition.getColumnName()) + " As " + getAliasColumnName(naming.getTableName(), definition.getColumnName()))
                         .collect(Collectors.joining(",")))
                 .append(" ")
                 .append("FROM")

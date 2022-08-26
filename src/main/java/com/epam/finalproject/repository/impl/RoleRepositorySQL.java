@@ -14,6 +14,8 @@ import com.epam.finalproject.repository.RoleRepository;
 
 import java.util.Optional;
 
+import static com.epam.finalproject.repository.impl.SqlAliasConstants.ROLES_ALIAS;
+
 @Component
 public class RoleRepositorySQL extends SqlAnnotationDrivenRepository<Role> implements RoleRepository {
 
@@ -24,7 +26,7 @@ public class RoleRepositorySQL extends SqlAnnotationDrivenRepository<Role> imple
 
     @Override
     public Optional<Role> findByName(RoleEnum name) {
-        return template.query("SELECT r.* FROM roles as r where r.name = ?", ps -> ps.setString(1, name.name()), wrapToOptional((rs, rowNum) -> entityMapper.mapAs(rs, entitySqlDefinition, "r")));
+        return template.query("SELECT "+ROLES_ALIAS+" FROM roles as r where r.name = ?", ps -> ps.setString(1, name.name()), wrapToOptional((rs, rowNum) -> entityMapper.mapAs(rs, entitySqlDefinition, "r")));
     }
 
     @Override

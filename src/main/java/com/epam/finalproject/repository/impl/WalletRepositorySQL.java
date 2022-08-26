@@ -18,12 +18,14 @@ import com.epam.finalproject.repository.WalletRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.finalproject.repository.impl.SqlAliasConstants.*;
+
 @Component
 public class WalletRepositorySQL extends SqlAnnotationDrivenRepository<Wallet> implements WalletRepository {
 
 
-    public static final String SELECT_EAGER = "SELECT w.*,c.* FROM wallets as w left join app_currencies as c on w.currency_id = c.id";
-    public static final String SELECT_EAGER_FORMAT = "SELECT %s FROM wallets as w left join app_currencies as c on w.currency_id = c.id";
+    public static final String SELECT_EAGER = "SELECT "+WALLETS_ALIAS+","+APP_CURRENCIES_ALIAS+"FROM wallets as w left join app_currencies as ac on w.currency_id = ac.id";
+    public static final String SELECT_EAGER_FORMAT = "SELECT %s FROM wallets as w left join app_currencies as ac on w.currency_id = ac.id";
 
     @Autowire
     public WalletRepositorySQL(JdbcTemplate template, SqlEntityMapper entityMapper,
@@ -36,7 +38,7 @@ public class WalletRepositorySQL extends SqlAnnotationDrivenRepository<Wallet> i
         return template.query(SELECT_EAGER + " LEFT JOIN users as u on w.user_id = u.id WHERE u.username = ? ",
                 pss -> pss.setString(1, username), (rs, rowNum) -> {
                     Wallet wallet = entityMapper.mapAs(rs, entitySqlDefinition, "w");
-                    wallet.setMoneyCurrency(entityMapper.mapAs(rs, AppCurrency.class, "c"));
+                    wallet.setMoneyCurrency(entityMapper.mapAs(rs, AppCurrency.class, "ac"));
                     return wallet;
                 });
     }
@@ -46,7 +48,7 @@ public class WalletRepositorySQL extends SqlAnnotationDrivenRepository<Wallet> i
         return template.query(SELECT_EAGER + " WHERE w.id = ? ", pss -> pss.setLong(1, id),
                 wrapToOptional((rs, rowNum) -> {
                     Wallet wallet = entityMapper.mapAs(rs, entitySqlDefinition, "w");
-                    wallet.setMoneyCurrency(entityMapper.mapAs(rs, AppCurrency.class, "c"));
+                    wallet.setMoneyCurrency(entityMapper.mapAs(rs, AppCurrency.class, "ac"));
                     return wallet;
                 }));
     }
@@ -60,7 +62,7 @@ public class WalletRepositorySQL extends SqlAnnotationDrivenRepository<Wallet> i
                     ps.setInt(3, pageable.getPageSize());
                 }, (rs, rowNum) -> {
                     Wallet wallet = entityMapper.mapAs(rs, entitySqlDefinition, "w");
-                    wallet.setMoneyCurrency(entityMapper.mapAs(rs, AppCurrency.class, "c"));
+                    wallet.setMoneyCurrency(entityMapper.mapAs(rs, AppCurrency.class, "ac"));
                     return wallet;
                 });
         long count = template.query(String.format(COUNT_FROM_FORMAT,String.format(SELECT_EAGER_FORMAT,"w.id") + " LEFT JOIN users as u on w.user_id = u.id WHERE u.username = ? "),

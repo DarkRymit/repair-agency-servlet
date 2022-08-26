@@ -20,18 +20,22 @@ import com.epam.finalproject.repository.UserRepository;
 import java.sql.ResultSet;
 import java.util.*;
 
+import static com.epam.finalproject.repository.impl.SqlAliasConstants.*;
+
 @Component
 public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> implements UserRepository {
 
+
     public static final String SELECT_EAGER_FORMAT = "SELECT %s FROM users as u left join user_has_role as uhr on u.id = uhr.user_id left join roles as r on r.id = uhr.role_id left join wallets as w on u.id = w.user_id left join app_currencies as ac on w.currency_id = ac.id ";
 
-    public static final String SELECT_EAGER = String.format(SELECT_EAGER_FORMAT, " u.*, r.* , w.* ,ac.* ");
+    public static final String SELECT_EAGER = String.format(SELECT_EAGER_FORMAT, USER_ALIAS + "," + ROLES_ALIAS + "," + WALLETS_ALIAS + APP_CURRENCIES_ALIAS);
     public static final String SELECT_EAGER_ONE_TO_ONE_FORMAT = "SELECT %s FROM users as u ";
 
-    public static final String SELECT_EAGER_ONE_TO_ONE = String.format(SELECT_EAGER_ONE_TO_ONE_FORMAT, " u.* ");
+    public static final String SELECT_EAGER_ONE_TO_ONE = String.format(SELECT_EAGER_ONE_TO_ONE_FORMAT, USER_ALIAS);
 
     @Autowire
-    public UserRepositorySQL(JdbcTemplate template, SqlEntityMapper entityMapper, SqlEntityQueryGenerator queryGenerator, AnnotationSqlDefinitionReader definitionReader) {
+    public UserRepositorySQL(JdbcTemplate template, SqlEntityMapper entityMapper,
+            SqlEntityQueryGenerator queryGenerator, AnnotationSqlDefinitionReader definitionReader) {
         super(template, definitionReader, entityMapper, queryGenerator, User.class);
     }
 
@@ -64,13 +68,13 @@ public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> imple
             user[0].setRoles(new HashSet<>());
         }
         Wallet wallet = entityMapper.mapAs(rs, Wallet.class, "w");
-        if (!walletsId.contains(wallet.getId()) && wallet.getId()!=null) {
+        if (!walletsId.contains(wallet.getId()) && wallet.getId() != null) {
             wallet.setMoneyCurrency(entityMapper.mapAs(rs, AppCurrency.class, "ac"));
             user[0].getWallets().add(wallet);
             walletsId.add(wallet.getId());
         }
         Role role = entityMapper.mapAs(rs, Role.class, "r");
-        if (!rolesId.contains(role.getId()) && role.getId()!=null) {
+        if (!rolesId.contains(role.getId()) && role.getId() != null) {
             user[0].getRoles().add(role);
             rolesId.add(role.getId());
         }
@@ -83,12 +87,14 @@ public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> imple
 
     @Override
     public Boolean existsByUsername(String username) {
-        return template.query("SELECT u.id FROM users as u where u.username = ?", ps -> ps.setString(1, username), ResultSet::next);
+        return template.query("SELECT u.id as u_id FROM users as u where u.username = ?", ps -> ps.setString(1, username),
+                ResultSet::next);
     }
 
     @Override
     public Boolean existsByEmail(String email) {
-        return template.query("SELECT u.id FROM users as u where u.email = ?", ps -> ps.setString(1, email), ResultSet::next);
+        return template.query("SELECT u.id as u_id FROM users as u where u.email = ?", ps -> ps.setString(1, email),
+                ResultSet::next);
     }
 
 
@@ -113,13 +119,17 @@ public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> imple
         String finalQuery;
         String countQuery;
         if (dynamic == null) {
-            finalQuery = SELECT_EAGER_ONE_TO_ONE ;
+            finalQuery = SELECT_EAGER_ONE_TO_ONE;
             countQuery = String.format(COUNT_FROM_FORMAT, String.format(SELECT_EAGER_ONE_TO_ONE_FORMAT, "u.id"));
         } else {
-            finalQuery = SELECT_EAGER_ONE_TO_ONE + " WHERE u.id in ( " + String.format(SELECT_EAGER_FORMAT," DISTINCT u.id ") + dynamic + " )";
-            countQuery = String.format(COUNT_FROM_FORMAT, String.format(SELECT_EAGER_ONE_TO_ONE_FORMAT, "u.id") + " WHERE u.id in ( " + String.format(SELECT_EAGER_FORMAT," DISTINCT u.id ") + dynamic + " )");
+            finalQuery = SELECT_EAGER_ONE_TO_ONE + " WHERE u.id in ( " + String.format(SELECT_EAGER_FORMAT,
+                    " DISTINCT u.id ") + dynamic + " )";
+            countQuery = String.format(COUNT_FROM_FORMAT,
+                    String.format(SELECT_EAGER_ONE_TO_ONE_FORMAT, "u.id") + " WHERE u.id in ( " + String.format(
+                            SELECT_EAGER_FORMAT, " DISTINCT u.id ") + dynamic + " )");
         }
-        template.query(finalQuery + queryGenerator.order(entitySqlDefinition, request.getSort(),new SqlAliasTableNaming("u")) + " LIMIT ? , ? ", ps -> {
+        template.query(finalQuery + queryGenerator.order(entitySqlDefinition, request.getSort(),
+                new SqlAliasTableNaming("u")) + " LIMIT ? , ? ", ps -> {
             int currentPosition = setDynamicPart(dynamicPartValue, ps);
             ps.setLong(currentPosition, request.getOffset());
             ps.setInt(currentPosition + 1, request.getPageSize());
@@ -134,10 +144,12 @@ public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> imple
     private User getUser(ResultSet rs) {
         User user = entityMapper.mapAs(rs, entitySqlDefinition, "u");
         user.setRoles(new HashSet<>());
-        template.query("SELECT r.* FROM roles as r left join user_has_role as uhr on r.id = uhr.role_id where uhr.user_id = ?", ps -> ps.setLong(1, user.getId()), rs1 -> {
-            Role role = entityMapper.mapAs(rs1, Role.class, "r");
-            user.getRoles().add(role);
-        });
+        template.query(
+                "SELECT "+ ROLES_ALIAS +" FROM roles as r left join user_has_role as uhr on r.id = uhr.role_id where uhr.user_id = ?",
+                ps -> ps.setLong(1, user.getId()), rs1 -> {
+                    Role role = entityMapper.mapAs(rs1, Role.class, "r");
+                    user.getRoles().add(role);
+                });
         return user;
     }
 
@@ -145,9 +157,9 @@ public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> imple
         List<String> dynamicPart = new ArrayList<>();
         dynamicPart.add(" r.name = ? ");
         dynamicPartValue.add(RoleEnum.MASTER.name());
-        if (masterSearch.getUsername() != null && !masterSearch.getUsername().isBlank()){
+        if (masterSearch.getUsername() != null && !masterSearch.getUsername().isBlank()) {
             dynamicPart.add(" u.username LIKE ? ");
-            dynamicPartValue.add( "%"+masterSearch.getUsername()+"%");
+            dynamicPartValue.add("%" + masterSearch.getUsername() + "%");
         }
         return constructDynamic(dynamicPart);
     }
@@ -163,9 +175,9 @@ public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> imple
 
     private String generateDynamic(UserSearch userSearch, List<Object> dynamicPartValue) {
         List<String> dynamicPart = new ArrayList<>();
-        if (userSearch.getUsername() != null && !userSearch.getUsername().isBlank()){
+        if (userSearch.getUsername() != null && !userSearch.getUsername().isBlank()) {
             dynamicPart.add(" u.username LIKE ? ");
-            dynamicPartValue.add( "%"+userSearch.getUsername()+"%");
+            dynamicPartValue.add("%" + userSearch.getUsername() + "%");
         }
         return constructDynamic(dynamicPart);
     }

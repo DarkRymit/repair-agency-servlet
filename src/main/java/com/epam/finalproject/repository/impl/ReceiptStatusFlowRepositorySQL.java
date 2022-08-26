@@ -22,10 +22,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.epam.finalproject.repository.impl.SqlAliasConstants.*;
+
 @Component
 public class ReceiptStatusFlowRepositorySQL extends SqlAnnotationDrivenRepository<ReceiptStatusFlow> implements ReceiptStatusFlowRepository {
 
-    public static final String SELECT_EAGER = "SELECT f.*,fs.*,ts.*,r.* FROM receipt_status_flows as f left join receipt_statuses as fs on f.from_status_id = fs.id left join receipt_statuses as ts on f.to_status_id = ts.id left join roles as r on f.role_id = r.id";
+    public static final String SELECT_EAGER = "SELECT " +RECEIPT_STATUS_FLOWS_ALIAS + ","
+            + " fs.id as fs_id , fs.name as fs_name " +","
+            +"  ts.id as ts_id , ts.name as ts_name " +","
+            + ROLES_ALIAS
+            + "FROM receipt_status_flows as f left join receipt_statuses as fs on f.from_status_id = fs.id " +
+            "left join receipt_statuses as ts on f.to_status_id = ts.id left join roles as r on f.role_id = r.id";
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(ReceiptStatusFlowRepositorySQL.class);
 
     @Autowire

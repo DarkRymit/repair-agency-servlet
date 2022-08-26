@@ -5,6 +5,7 @@ import com.epam.finalproject.framework.beans.annotation.Component;
 import com.epam.finalproject.framework.data.Page;
 import com.epam.finalproject.framework.data.PageImpl;
 import com.epam.finalproject.framework.data.PageRequest;
+import com.epam.finalproject.framework.data.jdbc.DataAccessException;
 import com.epam.finalproject.framework.data.jdbc.JdbcTemplate;
 import com.epam.finalproject.framework.data.sql.SqlAnnotationDrivenRepository;
 import com.epam.finalproject.framework.data.sql.mapping.IdFieldDefinition;
@@ -30,20 +31,51 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.epam.finalproject.repository.impl.SqlAliasConstants.*;
+
 @Component
 public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt> implements ReceiptRepository {
 
 
-    private static final String FIND_EAGER_FORMAT = "SELECT  %s FROM receipts AS r LEFT JOIN repair_categories AS rc ON r.category_id = rc.id LEFT JOIN users AS m ON r.master_id = m.id LEFT JOIN users AS u ON r.user_id = u.id LEFT JOIN receipt_statuses AS st ON r.receipt_status_id = st.id LEFT JOIN receipt_deliveries AS d ON r.id = d.receipt_id LEFT JOIN receipt_items AS i ON r.id = i.receipt_id LEFT JOIN repair_works AS rw ON rw.id = i.repair_work_id  LEFT JOIN app_currencies AS ac ON r.currency_id = ac.id";
-    private static final String FIND_EAGER_ONE_TO_ONE_FORMAT = "SELECT %s  FROM receipts AS r LEFT JOIN repair_categories AS rc ON r.category_id = rc.id LEFT JOIN users AS m ON r.master_id = m.id LEFT JOIN users AS u ON r.user_id = u.id LEFT JOIN receipt_statuses AS st ON r.receipt_status_id = st.id LEFT JOIN receipt_deliveries AS d ON r.id = d.receipt_id  LEFT JOIN app_currencies AS ac ON r.currency_id = ac.id";
-    private static final String FIND_EAGER = String.format(FIND_EAGER_FORMAT, "r.*,rc.*, m.*, u.*, st.*, d.*, i.*, rw.*, ac.* ");
+    private static final String FIND_EAGER_FORMAT = "SELECT  %s FROM receipts AS r " +
+            "LEFT JOIN repair_categories AS rc ON r.category_id = rc.id LEFT JOIN users AS m ON r.master_id = m.id " +
+            "LEFT JOIN users AS u ON r.user_id = u.id " +
+            "LEFT JOIN receipt_statuses AS st ON r.receipt_status_id = st.id " +
+            "LEFT JOIN receipt_deliveries AS d ON r.id = d.receipt_id " +
+            "LEFT JOIN receipt_items AS i ON r.id = i.receipt_id " +
+            "LEFT JOIN repair_works AS rw ON rw.id = i.repair_work_id  " +
+            "LEFT JOIN app_currencies AS ac ON r.currency_id = ac.id";
+    private static final String FIND_EAGER_ONE_TO_ONE_FORMAT = "SELECT %s  FROM receipts AS r " +
+            "LEFT JOIN repair_categories AS rc ON r.category_id = rc.id " +
+            "LEFT JOIN users AS m ON r.master_id = m.id LEFT JOIN users AS u ON r.user_id = u.id " +
+            "LEFT JOIN receipt_statuses AS st ON r.receipt_status_id = st.id " +
+            "LEFT JOIN receipt_deliveries AS d ON r.id = d.receipt_id  " +
+            "LEFT JOIN app_currencies AS ac ON r.currency_id = ac.id";
+    private static final String FIND_EAGER = String.format(FIND_EAGER_FORMAT, RECEIPT_ALIAS + "," +
+            " st.id as st_id , st.name as st_name " + "," +
+            USER_MASTER_ALIAS + "," +
+            REPAIR_CATEGORY_ALIAS + "," +
+            USER_ALIAS + "," +
+            "  d.receipt_id as d_receipt_id , d.city as d_city , d.country as d_country ," +
+            " d.local_address as d_local_address , d.postal_code as d_postal_code , d.state as d_state " + "," +
+            RECEIPT_ITEMS_ALIAS + "," +
+            REPAIR_WORK_ALIAS + "," +
+            APP_CURRENCIES_ALIAS);
     private static final String FIND_BY_ID_SQL = FIND_EAGER + " WHERE r.id = ?";
 
-    private static final String FIND_EAGER_ONE_TO_ONE = String.format(FIND_EAGER_ONE_TO_ONE_FORMAT, "r.*,rc.*, m.*, u.*, st.*,d.*,ac.* ");
+    private static final String FIND_EAGER_ONE_TO_ONE = String.format(FIND_EAGER_ONE_TO_ONE_FORMAT,
+            RECEIPT_ALIAS + "," +
+                    " st.id as st_id , st.name as st_name " + "," +
+                    USER_MASTER_ALIAS + "," +
+                    USER_ALIAS + "," +
+                    "  d.receipt_id as d_receipt_id , d.city as d_city , d.country as d_country ," +
+                    " d.local_address as d_local_address , d.postal_code as d_postal_code , d.state as d_state " + "," +
+                    APP_CURRENCIES_ALIAS);
 
 
     @Autowire
-    public ReceiptRepositorySQL(JdbcTemplate template, SqlEntityMapper entityMapper, SqlEntityQueryGenerator queryGenerator, AnnotationSqlDefinitionReader definitionReader) {
+    public ReceiptRepositorySQL(JdbcTemplate template, SqlEntityMapper entityMapper,
+            SqlEntityQueryGenerator queryGenerator, AnnotationSqlDefinitionReader definitionReader) {
         super(template, definitionReader, entityMapper, queryGenerator, Receipt.class);
     }
 
@@ -53,7 +85,7 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
         template.query(FIND_BY_ID_SQL, pss -> pss.setLong(1, aLong), rs -> {
             if (receipt[0] == null) {
                 receipt[0] = entityMapper.mapAs(rs, entityClass, "r");
-                if (rs.getObject("m.id") != null) {
+                if (rs.getObject("m_id") != null) {
                     receipt[0].setMaster(entityMapper.mapAs(rs, User.class, "m"));
                 } else {
                     receipt[0].setMaster(null);
@@ -106,16 +138,19 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
             countQuery = String.format(COUNT_FROM_FORMAT, String.format(FIND_EAGER_ONE_TO_ONE_FORMAT, "r.id"));
         } else {
             finalQuery = FIND_EAGER_ONE_TO_ONE + dynamic;
-            countQuery = String.format(COUNT_FROM_FORMAT, String.format(FIND_EAGER_ONE_TO_ONE_FORMAT, "r.id") + dynamic);
+            countQuery = String.format(COUNT_FROM_FORMAT,
+                    String.format(FIND_EAGER_ONE_TO_ONE_FORMAT, "r.id") + dynamic);
         }
-        template.query(finalQuery + queryGenerator.order(entitySqlDefinition, request.getSort(), naming) + " LIMIT ? , ? ", ps -> {
-            int currentPosition = setDynamicPart(dynamicPartValue, ps);
-            ps.setLong(currentPosition, request.getOffset());
-            ps.setInt(currentPosition + 1, request.getPageSize());
-        }, rs -> {
-            Receipt receipt = getReceipt(rs);
-            receiptMap.add(receipt);
-        });
+        template.query(
+                finalQuery + queryGenerator.order(entitySqlDefinition, request.getSort(), naming) + " LIMIT ? , ? ",
+                ps -> {
+                    int currentPosition = setDynamicPart(dynamicPartValue, ps);
+                    ps.setLong(currentPosition, request.getOffset());
+                    ps.setInt(currentPosition + 1, request.getPageSize());
+                }, rs -> {
+                    Receipt receipt = getReceipt(rs);
+                    receiptMap.add(receipt);
+                });
         long total = template.query(countQuery, ps -> setDynamicPart(dynamicPartValue, ps), this::getCount);
         return new PageImpl<>(receiptMap, request, total);
     }
@@ -123,7 +158,7 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
     private Receipt getReceipt(ResultSet rs) throws SQLException {
         Receipt receipt = entityMapper.mapAs(rs, entityClass, "r");
 
-        if (rs.getObject("m.id") != null) {
+        if (rs.getObject("m_id") != null) {
             receipt.setMaster(entityMapper.mapAs(rs, User.class, "m"));
         } else {
             receipt.setMaster(null);
@@ -135,11 +170,14 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
         receipt.setPriceCurrency(entityMapper.mapAs(rs, AppCurrency.class, "ac"));
 
         receipt.setItems(new HashSet<>());
-        template.query("SELECT i.*,rw.* FROM receipt_items AS i LEFT JOIN repair_works AS rw ON rw.id = i.repair_work_id WHERE i.receipt_id = ?", ps -> ps.setLong(1, receipt.getId()), rs1 -> {
-            ReceiptItem item = entityMapper.mapAs(rs1, ReceiptItem.class, "i");
-            item.setRepairWork(entityMapper.mapAs(rs1, RepairWork.class, "rw"));
-            receipt.getItems().add(item);
-        });
+        template.query(
+                "SELECT" + RECEIPT_ITEMS_ALIAS + "," + REPAIR_WORK_ALIAS +
+                        "FROM receipt_items AS i LEFT JOIN repair_works AS rw ON rw.id = i.repair_work_id WHERE i.receipt_id = ?",
+                ps -> ps.setLong(1, receipt.getId()), rs1 -> {
+                    ReceiptItem item = entityMapper.mapAs(rs1, ReceiptItem.class, "i");
+                    item.setRepairWork(entityMapper.mapAs(rs1, RepairWork.class, "rw"));
+                    receipt.getItems().add(item);
+                });
         return receipt;
     }
 
@@ -217,7 +255,7 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
     @Override
     public ReceiptDelivery saveDelivery(ReceiptDelivery entity) {
         SqlEntityDefinition<ReceiptDelivery> definition = definitionReader.getDefinition(ReceiptDelivery.class);
-        return save(definition,entity);
+        return save(definition, entity);
     }
 
     @Override
@@ -240,7 +278,7 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
             }
             return result;
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException(e);
         }
     }
 
@@ -249,7 +287,8 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
         template.update(queryGenerator.deleteById(ReceiptItem.class), ps -> ps.setLong(1, entity.getId()));
     }
 
-    protected ReceiptItem onInsertItem(SqlEntityDefinition<ReceiptItem> definition, IdFieldDefinition idFieldDefinition, ReceiptItem entity) throws ReflectiveOperationException {
+    protected ReceiptItem onInsertItem(SqlEntityDefinition<ReceiptItem> definition, IdFieldDefinition idFieldDefinition,
+            ReceiptItem entity) throws ReflectiveOperationException {
         List<Map<String, Object>> keys = new ArrayList<>();
         template.update(queryGenerator.insertQuery(definition), pss -> {
             pss.setNull(1, Types.BIGINT);
@@ -260,7 +299,8 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
         return entity;
     }
 
-    protected ReceiptItem onUpdateItem(SqlEntityDefinition<ReceiptItem> definition, IdFieldDefinition idFieldDefinition, ReceiptItem entity) throws ReflectiveOperationException {
+    protected ReceiptItem onUpdateItem(SqlEntityDefinition<ReceiptItem> definition, IdFieldDefinition idFieldDefinition,
+            ReceiptItem entity) throws ReflectiveOperationException {
         Long id = (Long) idFieldDefinition.getIdGetter().invoke(entity);
         template.update(queryGenerator.updateByIdQuery(definition), pss -> {
             pss.setLong(1, id);

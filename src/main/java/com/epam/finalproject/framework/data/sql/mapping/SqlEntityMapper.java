@@ -13,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 
+import static com.epam.finalproject.framework.data.sql.mapping.util.SqlUtil.getAliasColumnName;
+
 
 @Component
 public class SqlEntityMapper {
@@ -71,13 +73,13 @@ public class SqlEntityMapper {
             String tableName = getTableName(naming, entityDefinition);
             entityDefinition.getFieldDefinitions().stream().filter(this::filterReference).forEach(definition -> {
                 String column = definition.getColumnName();
-                writeField(object, resultSet, definition, tableName, column);
+                writeField(object, resultSet, definition,getAliasColumnName(tableName,column));
             });
         } else {
             entityDefinition.getFieldDefinitions()
                     .stream()
                     .filter(this::filterReference)
-                    .forEach(definition -> writeField(object, resultSet, definition, entityDefinition.getTableName(), definition.getColumnName()));
+                    .forEach(definition -> writeField(object, resultSet, definition, definition.getColumnName()));
         }
         return object;
     }
@@ -100,7 +102,7 @@ public class SqlEntityMapper {
                     writeToPreparedStatement(preparedStatement, definition, currentIndex, value);
                     currentIndex++;
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new EntityMappingException(e);
                 }
             }
         }
@@ -120,7 +122,7 @@ public class SqlEntityMapper {
         try {
             return target.getConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new EntityMappingException(e);
         }
     }
 
@@ -133,24 +135,24 @@ public class SqlEntityMapper {
         return tableName;
     }
 
-    private <T> void writeField(T object, ResultSet resultSet, SqlFieldDefinition definition, String tableName, String columnName) {
+    private <T> void writeField(T object, ResultSet resultSet, SqlFieldDefinition definition,  String columnName) {
         try {
             String setterName = "set" + StringUtils.fromUpper(definition.getFieldName());
             Method setterMethod = definition.getClazz().getDeclaredMethod(setterName, definition.getFieldClass());
-            Object value = readFromResultSet(resultSet, definition, tableName, columnName);
+            Object value = readFromResultSet(resultSet, definition, columnName);
             setterMethod.invoke(object, value);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new EntityMappingException(e);
         }
     }
 
-    private Object readFromResultSet(ResultSet resultSet, SqlFieldDefinition definition, String tableName, String columnName) throws Exception {
+    private Object readFromResultSet(ResultSet resultSet, SqlFieldDefinition definition, String columnName) throws Exception {
         log.trace("Start read value to definition {}", definition);
         SqlValueTranslator extractor = extractors.stream()
                 .filter(sqlValueExtractor -> sqlValueExtractor.supports(definition))
                 .findFirst()
                 .orElseThrow();
-        return extractor.extract(resultSet, definition, SqlUtil.getFullColumnName(tableName, columnName));
+        return extractor.extract(resultSet, definition,  columnName);
     }
 
     private void writeToPreparedStatement(PreparedStatement statement, SqlFieldDefinition definition, int index, Object object) throws Exception {
