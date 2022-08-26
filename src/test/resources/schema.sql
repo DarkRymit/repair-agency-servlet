@@ -38,7 +38,7 @@ CREATE TABLE app_locales
 
 CREATE TABLE users
 (
-    id                 bigint       NOT NULL AUTO_INCREMENT,
+    id                 bigint       GENERATED ALWAYS AS IDENTITY,
     creation_date      datetime(6)  NOT NULL,
     email              varchar(255) NOT NULL,
     first_name         varchar(255) DEFAULT NULL,

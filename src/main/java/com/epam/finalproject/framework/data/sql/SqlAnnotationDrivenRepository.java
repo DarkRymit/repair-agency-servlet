@@ -86,13 +86,22 @@ public class SqlAnnotationDrivenRepository<T> implements PagingAndSortingReposit
         List<Map<String, Object>> keys = new ArrayList<>();
         Long targetId = getTargetId(definition, entity);
         Long newId = targetId;
-        template.update(queryGenerator.insertQuery(definition), pss -> {
-            pss.setObject(1, targetId);
-            entityMapper.setValues(pss, definition, 2, entity);
+        String query = targetId != null?queryGenerator.insertQuery(definition):queryGenerator.insertQueryNoId(definition);
+        template.update(query, pss -> {
+            int index = 1;
+            if (targetId!=null){
+                pss.setObject(1, targetId);
+                index=2;
+            }
+            entityMapper.setValues(pss, definition, index, entity);
         }, keys);
         if (newId == null) {
-            Object id = keys.get(0).get("GENERATED_KEY");
-            newId = ((BigInteger) id).longValue();
+            Object id = keys.get(0).values().stream().findFirst().orElseThrow();
+            if (id instanceof BigInteger){
+                newId = ((BigInteger) id).longValue();
+            }else {
+                newId =  (Long) id;
+            }
         }
         idFieldDefinition.getIdSetter().invoke(entity, newId);
         return entity;

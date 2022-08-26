@@ -104,6 +104,24 @@ public class SqlEntityQueryGenerator {
     public <T> String insertQuery(SqlEntityDefinition<T> entityDefinition) {
         StringBuilder query = new StringBuilder();
         List<SqlFieldDefinition> definitionsToWrite = getDefinitionsToWrite(entityDefinition);
+        doInsertQuery(entityDefinition,query,definitionsToWrite);
+        log.trace(GENERATED_QUERY, query);
+        return query.toString();
+    }
+    public <T> String insertQueryNoId(SqlEntityDefinition<T> entityDefinition) {
+        StringBuilder query = new StringBuilder();
+        List<SqlFieldDefinition> definitionsToWrite = entityDefinition.getFieldDefinitions()
+                .stream()
+                .filter(definition -> !ignoreOnQuery(definition))
+                .filter(definition -> !(definition instanceof IdFieldDefinition))
+                .collect(Collectors.toList());
+        doInsertQuery(entityDefinition, query, definitionsToWrite);
+        log.trace(GENERATED_QUERY, query);
+        return query.toString();
+    }
+
+    private <T> void doInsertQuery(SqlEntityDefinition<T> entityDefinition, StringBuilder query,
+            List<SqlFieldDefinition> definitionsToWrite) {
         query.append("INSERT")
                 .append(" ")
                 .append("INTO")
@@ -123,8 +141,6 @@ public class SqlEntityQueryGenerator {
                         .mapToObj(value -> "?")
                         .collect(Collectors.joining(",")))
                 .append(")");
-        log.trace(GENERATED_QUERY, query);
-        return query.toString();
     }
 
     private <T> List<SqlFieldDefinition> getDefinitionsToWrite(SqlEntityDefinition<T> entityDefinition) {
@@ -201,6 +217,9 @@ public class SqlEntityQueryGenerator {
     }
 
     public <T> String order(SqlEntityDefinition<T> entityDefinition,Sort sort,SqlAliasTableNaming tableNaming) {
+        if (sort.equals(Sort.unsorted())){
+            return " ";
+        }
         StringBuilder query = new StringBuilder();
         query.append(" ORDER BY ");
         Map<String, SqlFieldDefinition> definitionMap = getDefinitionsMap(entityDefinition);
