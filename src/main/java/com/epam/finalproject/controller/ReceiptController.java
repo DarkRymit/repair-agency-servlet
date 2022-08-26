@@ -62,7 +62,7 @@ public class ReceiptController {
     }
 
     @PostMapping("/{id}/response/create")
-    String responseCreate( ReceiptResponseCreateRequest createRequest, UserDetails userDetails, @PathVariable("id") Long id) {
+    String responseCreate( @RequestObject ReceiptResponseCreateRequest createRequest, UserDetails userDetails, @PathVariable("id") Long id) {
         createRequest.setReceiptId(id);
         receiptResponseService.createNew(createRequest,userDetails.getUsername());
         return "redirect:/order/"+id;
@@ -95,6 +95,7 @@ public class ReceiptController {
         ReceiptDTO receipt = receiptService.findById(id);
         if (receiptResponseService.existByReceiptId(id)){
             ReceiptResponseDTO response = receiptResponseService.findByReceiptId(id);
+            log.trace(" Response {}",response);
             request.setAttribute("response",response);
         }
         log.trace("Work {}",receipt);

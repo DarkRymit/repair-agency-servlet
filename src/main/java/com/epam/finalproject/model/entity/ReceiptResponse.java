@@ -1,8 +1,6 @@
 package com.epam.finalproject.model.entity;
 
-import com.epam.finalproject.framework.data.sql.mapping.annotation.SqlColumn;
-import com.epam.finalproject.framework.data.sql.mapping.annotation.SqlId;
-import com.epam.finalproject.framework.data.sql.mapping.annotation.SqlTable;
+import com.epam.finalproject.framework.data.sql.mapping.annotation.*;
 
 import java.util.Objects;
 
@@ -14,6 +12,9 @@ public class ReceiptResponse {
     @SqlColumn("receipt_id")
     private Long id;
 
+    @SqlMapsId
+    @SqlReferenceId
+    @SqlColumn("receipt_id")
     private Receipt receipt;
 
     @SqlColumn("text")

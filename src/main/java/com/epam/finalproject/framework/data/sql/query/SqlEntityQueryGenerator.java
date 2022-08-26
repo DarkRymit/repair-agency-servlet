@@ -217,7 +217,7 @@ public class SqlEntityQueryGenerator {
     }
 
     public <T> String order(SqlEntityDefinition<T> entityDefinition,Sort sort,SqlAliasTableNaming tableNaming) {
-        if (sort.equals(Sort.unsorted())){
+        if (haveSort(sort)){
             return " ";
         }
         StringBuilder query = new StringBuilder();
@@ -234,7 +234,14 @@ public class SqlEntityQueryGenerator {
         return query.toString();
     }
 
+    private boolean haveSort(Sort sort) {
+        return sort.equals(Sort.unsorted()) || sort.toList().isEmpty();
+    }
+
     public <T> String order(SqlEntityDefinition<T> entityDefinition,Sort sort) {
+        if (haveSort(sort)){
+            return " ";
+        }
         StringBuilder query = new StringBuilder();
         query.append(" ORDER BY ");
         Map<String, SqlFieldDefinition> definitionMap = getDefinitionsMap(entityDefinition);
