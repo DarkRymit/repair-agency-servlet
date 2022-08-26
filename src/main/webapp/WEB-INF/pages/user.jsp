@@ -69,7 +69,7 @@
                                                 <c:forEach var="wallet" items="${user.wallets}">
                                                     <li class="list-group-item">
                                                         <strong>${wallet.name}</strong>
-                                                        <strong>${wallet.moneyAmount}</strong>
+                                                        <strong><fmt:formatNumber value="${wallet.moneyAmount}" minFractionDigits="0"/></strong>
                                                         <strong>${wallet.moneyCurrency.code}</strong>
                                                     </li>
                                                 </c:forEach>

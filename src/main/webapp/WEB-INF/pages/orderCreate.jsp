@@ -42,17 +42,16 @@
                                             <br>
                                             <ul class="list-group work-list" id="works">
                                                 <c:forEach items="${works}" var="work">
-                                                <li class="list-group-item">
-                                                    <label>
-                                                        <input class="form-check-input" type="checkbox" value="">
-                                                        ${work.name}
-                                                    </label>
-                                                    <div class="d-none">${work.id}</div>
-                                                    <br>
-                                                    ${work.lowerBorder}
-                                                    ${work.upperBorder}
-                                                    <strong>${work.currency.code}</strong>
-                                                </li>
+                                                    <li class="list-group-item">
+                                                        <label>
+                                                            <input class="form-check-input" type="checkbox" value="">
+                                                                ${work.name}
+                                                        </label>
+                                                        <div class="d-none">${work.id}</div>
+                                                        <br>
+                                                        <ext:workPricing lower="${work.lowerBorder}" upper="${work.upperBorder}"/>
+                                                        <strong>${work.currency.code}</strong>
+                                                    </li>
                                                 </c:forEach>
                                             </ul>
                                         </li>
@@ -62,46 +61,57 @@
                                             <ul class="list-group">
                                                 <li class="list-group-item">
                                                     <div class="input-group">
-                                                        <strong class="input-group-text"><fmt:message key="order.delivery.country.name"/></strong>
-                                                        <input type="text" aria-label="Country" class="form-control" id="country">
+                                                        <strong class="input-group-text"><fmt:message
+                                                                key="order.delivery.country.name"/></strong>
+                                                        <input type="text" aria-label="Country" class="form-control"
+                                                               id="country">
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="input-group">
-                                                        <strong class="input-group-text"><fmt:message key="order.delivery.state.name"/></strong>
-                                                        <input type="text" aria-label="State" class="form-control" id="state">
+                                                        <strong class="input-group-text"><fmt:message
+                                                                key="order.delivery.state.name"/></strong>
+                                                        <input type="text" aria-label="State" class="form-control"
+                                                               id="state">
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="input-group">
-                                                        <strong class="input-group-text"><fmt:message key="order.delivery.city.name"/></strong>
-                                                        <input type="text" aria-label="City" class="form-control" id="city">
+                                                        <strong class="input-group-text"><fmt:message
+                                                                key="order.delivery.city.name"/></strong>
+                                                        <input type="text" aria-label="City" class="form-control"
+                                                               id="city">
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="input-group">
-                                                        <strong class="input-group-text"><fmt:message key="order.delivery.localAddress.name"/></strong>
+                                                        <strong class="input-group-text"><fmt:message
+                                                                key="order.delivery.localAddress.name"/></strong>
                                                         <input type="text" aria-label="Local address"
-                                                                  class="form-control" id="local-address">
+                                                               class="form-control" id="local-address">
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="input-group">
-                                                        <strong class="input-group-text"><fmt:message key="order.delivery.postalCode.name"/></strong>
+                                                        <strong class="input-group-text"><fmt:message
+                                                                key="order.delivery.postalCode.name"/></strong>
                                                         <input type="text" aria-label="Postal code"
-                                                                  class="form-control" id="postal-code">
+                                                               class="form-control" id="postal-code">
                                                     </div>
                                                 </li>
                                             </ul>
                                         </li>
                                         <li class="list-group-item">
                                             <div class="input-group">
-                                                <strong class="input-group-text"><fmt:message key="order.note"/></strong>
-                                                <textarea maxlength="255" aria-label="Note" class="form-control" id="note"></textarea>
+                                                <strong class="input-group-text"><fmt:message
+                                                        key="order.note"/></strong>
+                                                <textarea maxlength="255" aria-label="Note" class="form-control"
+                                                          id="note"></textarea>
                                             </div>
                                         </li>
                                     </ul>
-                                    <button type="submit" class="btn btn-primary" id="submit"><fmt:message key="order.create.submit"/></button>
+                                    <button type="submit" class="btn btn-primary" id="submit"><fmt:message
+                                            key="order.create.submit"/></button>
                                 </form>
                             </div>
                         </div>
@@ -121,14 +131,14 @@
                 event.preventDefault();
 
                 var receiptItems = []
-                $('#works li').each(function(idx, li) {
+                $('#works li').each(function (idx, li) {
                     var work = $(li);
                     var workId = work.find(".d-none").text();
                     var workChosen = work.find("input").is(':checked');
-                    if (workChosen){
+                    if (workChosen) {
                         receiptItems.push(
                             {
-                                repairWorkID:workId
+                                repairWorkID: workId
                             }
                         )
                     }
@@ -140,15 +150,14 @@
                 var localAddress = $("#local-address").val();
                 var postalCode = $("#postal-code").val();
 
-                var receiptDelivery =  {}
+                var receiptDelivery = {}
                 Object.assign(receiptDelivery,
-                    country  && { "country": country },
-                    state && { "state": state },
-                    city  && { "city": city },
-                    localAddress  && { "localAddress": localAddress },
-                    postalCode && { "postalCode": postalCode },
+                    country && {"country": country},
+                    state && {"state": state},
+                    city && {"city": city},
+                    localAddress && {"localAddress": localAddress},
+                    postalCode && {"postalCode": postalCode},
                 );
-
 
 
                 var formData = {
@@ -158,9 +167,9 @@
 
                     categoryId:${category.id},
 
-                    priceCurrency:'${currency.code}',
+                    priceCurrency: '${currency.code}',
 
-                    note:$("#note").val()
+                    note: $("#note").val()
                 };
 
                 var readyData = JSON.stringify(formData)
@@ -175,13 +184,13 @@
                     data: readyData,
                     dataType: "json",
                     contentType: "application/json",
-                    xhr: function() {
+                    xhr: function () {
                         return xhr;
                     },
-                }).always(function() {
-                    if (window.location.href.split(/[?#]/)[0] !== xhr.responseURL){
+                }).always(function () {
+                    if (window.location.href.split(/[?#]/)[0] !== xhr.responseURL) {
                         window.location.href = xhr.responseURL;
-                    }else {
+                    } else {
                         $("html").html(xhr.response);
                     }
                 });

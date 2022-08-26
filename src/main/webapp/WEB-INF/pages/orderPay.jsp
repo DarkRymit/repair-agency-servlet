@@ -50,7 +50,7 @@
                                     <li class="list-group-item">
                                         <strong>Total price</strong>
                                         <span>:</span>
-                                            ${order.totalPrice}
+                                        <fmt:formatNumber value="${order.totalPrice}" minFractionDigits="0"/>
                                         <strong>${order.priceCurrency.code}</strong>
                                     </li>
                                 </ul>
@@ -65,7 +65,7 @@
                                                 <c:forEach items="${wallets}" var="wallet">
                                                     <option value="${wallet.id}">
                                                         <strong><c:out value="${wallet.name}"/></strong>
-                                                        <strong><c:out value="${wallet.moneyAmount}"/></strong>
+                                                        <strong><fmt:formatNumber value="${wallet.moneyAmount}" minFractionDigits="0"/></strong>
                                                         <strong><c:out value="${wallet.moneyCurrency.code}"/></strong>
                                                     </option>
                                                 </c:forEach>

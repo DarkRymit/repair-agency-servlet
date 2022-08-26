@@ -52,8 +52,7 @@
                                                             <li class="list-group-item">
                                                                 ${work.name}
                                                                 <br>
-                                                                ${work.lowerBorder}
-                                                                ${work.upperBorder}
+                                                                    <ext:workPricing lower="${work.lowerBorder}" upper="${work.upperBorder}"/>
                                                                 <strong>${currency.code}</strong>
                                                             </li>
                                                         </ul>

@@ -78,7 +78,7 @@
                                                 </i>
                                             </c:when>
                                             <c:otherwise>
-                                                ${order.totalPrice}
+                                                <fmt:formatNumber value="${order.totalPrice}" minFractionDigits="0"/>
                                             </c:otherwise>
                                         </c:choose>
                                         <strong>${order.priceCurrency.code}</strong>
@@ -99,7 +99,7 @@
                                                             </i>
                                                         </c:when>
                                                         <c:otherwise>
-                                                            ${item.priceAmount}
+                                                            <fmt:formatNumber value="${item.priceAmount}" minFractionDigits="0"/>
                                                         </c:otherwise>
                                                     </c:choose>
                                                     <strong>${order.priceCurrency.code}</strong>

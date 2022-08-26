@@ -78,7 +78,7 @@
                                         <li class="list-group-item">
                                             <strong>Total price</strong>
                                             <span>:</span>
-                                            ${order.totalPrice}
+                                            <fmt:formatNumber value="${order.totalPrice}" minFractionDigits="0"/>
                                             <strong>${order.priceCurrency.code}</strong>
                                             <div class="input-group mb-3">
                                                 <label class="input-group-text"
@@ -104,7 +104,7 @@
                                                     <div class="input-group mb-3">
                                                         <input class="form-control price"
                                                                placeholder="${item.priceAmount}"
-                                                               value="${item.priceAmount}"
+                                                               value="<fmt:formatNumber value="${item.priceAmount}" minFractionDigits="0"/>"
                                                                type="number">
                                                         <span class="input-group-text" id="basic-addon2"><strong>
                                                                 ${order.priceCurrency.code}
