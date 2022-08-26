@@ -63,7 +63,7 @@
                                                 </div>
                                             </li>
                                             <li class=" list-group-item">
-                                                <a class="btn btn-outline-primary" <ext:href path="/order/create?category=${category.keyName}&currency=${currency.code}"/> role="button">
+                                                <a class="btn btn-outline-primary" <ext:href path="/order/create?category=${category.keyName}"/> role="button">
                                                     <fmt:message key="categories.makeOrder"/>
                                                 </a>
                                             </li>

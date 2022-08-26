@@ -50,7 +50,7 @@
                                                         <div class="d-none">${work.id}</div>
                                                         <br>
                                                         <ext:workPricing lower="${work.lowerBorder}" upper="${work.upperBorder}"/>
-                                                        <strong>${work.currency.code}</strong>
+                                                        <strong>${currency.code}</strong>
                                                     </li>
                                                 </c:forEach>
                                             </ul>

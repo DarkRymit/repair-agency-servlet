@@ -1,5 +1,6 @@
 package com.epam.finalproject.controller;
 
+import com.epam.finalproject.currency.context.CurrencyUnitContextHolder;
 import com.epam.finalproject.dto.*;
 import com.epam.finalproject.framework.security.UserDetails;
 import com.epam.finalproject.framework.web.annotation.*;
@@ -63,7 +64,6 @@ public class ReceiptController {
     @PostMapping("/{id}/response/create")
     String responseCreate( ReceiptResponseCreateRequest createRequest, UserDetails userDetails, @PathVariable("id") Long id) {
         createRequest.setReceiptId(id);
-        log.info(createRequest.toString());
         receiptResponseService.createNew(createRequest,userDetails.getUsername());
         return "redirect:/order/"+id;
     }
@@ -108,10 +108,10 @@ public class ReceiptController {
         return "redirect:/order/"+receipt.getId();
     }
     @GetMapping("/create")
-    String create(HttpServletRequest request, @RequestParam("category") String category, @RequestParam("currency")  String currency) {
+    String create(HttpServletRequest request, @RequestParam("category") String category) {
         RepairCategoryDTO repairCategory = repairCategoryService.findByKeyName(category);
         List<RepairWorkDTO> repairWorks = repairWorkService.findByCategoryKey(category);
-        AppCurrency appCurrency = appCurrencyService.findByCode(currency);
+        AppCurrency appCurrency = appCurrencyService.findByCode(CurrencyUnitContextHolder.getCurrencyUnit().getCurrencyCode());
         request.setAttribute("works",repairWorks);
         request.setAttribute("category",repairCategory);
         request.setAttribute("currency",appCurrency);
