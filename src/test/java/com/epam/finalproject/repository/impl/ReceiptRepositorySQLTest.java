@@ -41,7 +41,7 @@ class ReceiptRepositorySQLTest {
     ReceiptRepositorySQL receiptRepository;
 
     @BeforeAll
-    static void getResources() {
+    static void setup() {
         DataSource dataSource = DatabaseSetupExtension.getDataSource();
         template = new JdbcTemplate(dataSource);
         definitionReader = new AnnotationSqlDefinitionReader();
@@ -53,7 +53,7 @@ class ReceiptRepositorySQLTest {
     }
 
     @BeforeEach
-    void setUp() {
+    void init() {
         receiptRepository = new ReceiptRepositorySQL(template, entityMapper, queryGenerator, definitionReader);
     }
 
