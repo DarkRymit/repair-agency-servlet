@@ -28,7 +28,7 @@ public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> imple
 
     public static final String SELECT_EAGER_FORMAT = "SELECT %s FROM users as u left join user_has_role as uhr on u.id = uhr.user_id left join roles as r on r.id = uhr.role_id left join wallets as w on u.id = w.user_id left join app_currencies as ac on w.currency_id = ac.id ";
 
-    public static final String SELECT_EAGER = String.format(SELECT_EAGER_FORMAT, USER_ALIAS + "," + ROLES_ALIAS + "," + WALLETS_ALIAS + APP_CURRENCIES_ALIAS);
+    public static final String SELECT_EAGER = String.format(SELECT_EAGER_FORMAT, USER_ALIAS + "," + ROLES_ALIAS + "," + WALLETS_ALIAS + "," + APP_CURRENCIES_ALIAS);
     public static final String SELECT_EAGER_ONE_TO_ONE_FORMAT = "SELECT %s FROM users as u ";
 
     public static final String SELECT_EAGER_ONE_TO_ONE = String.format(SELECT_EAGER_ONE_TO_ONE_FORMAT, USER_ALIAS);
@@ -82,7 +82,13 @@ public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> imple
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return Optional.empty();
+        User[] user = {null};
+        Set<Long> walletsId = new HashSet<>();
+        Set<Long> rolesId = new HashSet<>();
+        template.query(SELECT_EAGER + " WHERE u.email = ?", pss -> pss.setString(1, email), rs -> {
+            getUserEager(user, walletsId, rolesId, rs);
+        });
+        return Optional.ofNullable(user[0]);
     }
 
     @Override
