@@ -27,10 +27,6 @@ public class ModelMapperParameters {
         this.repairCategoryRepository = repairCategoryRepository;
     }
 
-    public static ModelMapperParametersBuilder builder() {
-        return new ModelMapperParametersBuilder();
-    }
-
     public Supplier<Locale> getLocaleSupplier() {
         return this.localeSupplier;
     }
@@ -102,54 +98,5 @@ public class ModelMapperParameters {
                 ", repairWorkRepository=" + repairWorkRepository +
                 ", repairCategoryRepository=" + repairCategoryRepository +
                 '}';
-    }
-
-    public static class ModelMapperParametersBuilder {
-        private Supplier<Locale> localeSupplier;
-        private Supplier<TimeZone> timeZoneSupplier;
-        private Supplier<CurrencyUnit> currencyUnitSupplier;
-        private RepairWorkRepository repairWorkRepository;
-        private RepairCategoryRepository repairCategoryRepository;
-
-        ModelMapperParametersBuilder() {
-        }
-
-        public ModelMapperParametersBuilder localeSupplier(Supplier<Locale> localeSupplier) {
-            this.localeSupplier = localeSupplier;
-            return this;
-        }
-
-        public ModelMapperParametersBuilder timeZoneSupplier(Supplier<TimeZone> timeZoneSupplier) {
-            this.timeZoneSupplier = timeZoneSupplier;
-            return this;
-        }
-
-        public ModelMapperParametersBuilder currencyUnitSupplier(
-                Supplier<CurrencyUnit> currencyUnitSupplier) {
-            this.currencyUnitSupplier = currencyUnitSupplier;
-            return this;
-        }
-
-        public ModelMapperParametersBuilder repairWorkRepository(
-                RepairWorkRepository repairWorkRepository) {
-            this.repairWorkRepository = repairWorkRepository;
-            return this;
-        }
-
-        public ModelMapperParametersBuilder repairCategoryRepository(
-                RepairCategoryRepository repairCategoryRepository) {
-            this.repairCategoryRepository = repairCategoryRepository;
-            return this;
-        }
-
-        public ModelMapperParameters build() {
-            return new ModelMapperParameters(localeSupplier, timeZoneSupplier, currencyUnitSupplier,
-                    repairWorkRepository,
-                    repairCategoryRepository);
-        }
-
-        public String toString() {
-            return "ModelMapperParameters.ModelMapperParametersBuilder(localeSupplier=" + this.localeSupplier + ", timeZoneSupplier=" + this.timeZoneSupplier + ", currencyUnitSupplier=" + this.currencyUnitSupplier + ", repairWorkRepository=" + this.repairWorkRepository + ", repairCategoryRepository=" + this.repairCategoryRepository + ")";
-        }
     }
 }

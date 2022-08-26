@@ -7,7 +7,6 @@ package com.epam.finalproject.framework.data;
 
 import com.epam.finalproject.framework.data.util.LazyStreamable;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -18,16 +17,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-@FunctionalInterface
 public interface Streamable<T> extends Iterable<T>, Supplier<Stream<T>> {
 
     static <T> Streamable<T> empty() {
         return Collections::emptyIterator;
-    }
-
-    @SafeVarargs
-    static <T> Streamable<T> of(T... t) {
-        return () -> Arrays.asList(t).iterator();
     }
 
     static <T> Streamable<T> of(Iterable<T> iterable) {

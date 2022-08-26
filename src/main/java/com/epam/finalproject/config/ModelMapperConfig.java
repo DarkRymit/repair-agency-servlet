@@ -32,15 +32,19 @@ public class ModelMapperConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.typeMap(SignUpRequest.class, User.class).addMappings(mapper -> mapper.skip(User::setPassword));
         modelMapper.typeMap(RepairWork.class, RepairWorkDTO.class)
-                .addMappings(mapper -> mapper.using(localNameWorkConverter(parameters.getRepairWorkRepository(), parameters.getLocaleSupplier()))
+                .addMappings(mapper -> mapper.using(
+                                localNameWorkConverter(parameters.getRepairWorkRepository(), parameters.getLocaleSupplier()))
                         .map(RepairWork::getId, RepairWorkDTO::setName))
-                .addMappings(mapper -> mapper.using(lowerBorderWorkConverter(parameters.getRepairWorkRepository(), parameters.getCurrencyUnitSupplier()))
+                .addMappings(mapper -> mapper.using(lowerBorderWorkConverter(parameters.getRepairWorkRepository(),
+                                parameters.getCurrencyUnitSupplier()))
                         .map(RepairWork::getId, RepairWorkDTO::setLowerBorder))
-                .addMappings(mapper -> mapper.using(upperBorderBorderWorkConverter(parameters.getRepairWorkRepository(), parameters.getCurrencyUnitSupplier()))
+                .addMappings(mapper -> mapper.using(upperBorderBorderWorkConverter(parameters.getRepairWorkRepository(),
+                                parameters.getCurrencyUnitSupplier()))
                         .map(RepairWork::getId, RepairWorkDTO::setUpperBorder));
 
         modelMapper.typeMap(RepairCategory.class, RepairCategoryDTO.class)
-                .addMappings(mapper -> mapper.using(localNameCategoryConverter(parameters.getRepairCategoryRepository(), parameters.getLocaleSupplier()))
+                .addMappings(mapper -> mapper.using(localNameCategoryConverter(parameters.getRepairCategoryRepository(),
+                                parameters.getLocaleSupplier()))
                         .map(RepairCategory::getId, RepairCategoryDTO::setName));
         modelMapper.typeMap(Receipt.class, ReceiptDTO.class)
                 .addMappings(mapper -> mapper.using(instantZonedDateTimeConverter(parameters.getTimeZoneSupplier()))
@@ -56,14 +60,10 @@ public class ModelMapperConfig {
     }
 
     @Bean
-    public ModelMapperParameters modelMapperParameters(RepairWorkRepository repairWorkLocalPartRepository, RepairCategoryRepository repairCategoryLocalPartRepository) {
-        return ModelMapperParameters.builder()
-                .localeSupplier(currentLocale())
-                .timeZoneSupplier(currentTimeZone())
-                .currencyUnitSupplier(currentCurrencyUnit())
-                .repairWorkRepository(repairWorkLocalPartRepository)
-                .repairCategoryRepository(repairCategoryLocalPartRepository)
-                .build();
+    public ModelMapperParameters modelMapperParameters(RepairWorkRepository repairWorkLocalPartRepository,
+            RepairCategoryRepository repairCategoryLocalPartRepository) {
+        return new ModelMapperParameters(currentLocale(), currentTimeZone(), currentCurrencyUnit(),
+                repairWorkLocalPartRepository, repairCategoryLocalPartRepository);
     }
 
 
@@ -71,15 +71,18 @@ public class ModelMapperConfig {
         return mappingContext -> mappingContext.getSource().atZone(timeZoneSupplier.get().toZoneId());
     }
 
-    private Converter<Long, String> localNameCategoryConverter(RepairCategoryRepository repository, Supplier<Locale> localeSupplier) {
+    private Converter<Long, String> localNameCategoryConverter(RepairCategoryRepository repository,
+            Supplier<Locale> localeSupplier) {
         return mappingContext -> Optional.ofNullable(mappingContext.getSource())
-                .map(s -> repository.findFirstLocalPartByCategory_IdAndLanguage_Lang(s, localeSupplier.get().getLanguage())
+                .map(s -> repository.findFirstLocalPartByCategory_IdAndLanguage_Lang(s,
+                                localeSupplier.get().getLanguage())
                         .orElseThrow()
                         .getName())
                 .orElse(null);
     }
 
-    private Converter<Long, String> localNameWorkConverter(RepairWorkRepository repository, Supplier<Locale> localeSupplier) {
+    private Converter<Long, String> localNameWorkConverter(RepairWorkRepository repository,
+            Supplier<Locale> localeSupplier) {
         return mappingContext -> Optional.ofNullable(mappingContext.getSource())
                 .map(s -> repository.findLocalByWork_IdAndLanguage_Lang(s, localeSupplier.get().getLanguage())
                         .orElseThrow()
@@ -87,7 +90,8 @@ public class ModelMapperConfig {
                 .orElse(null);
     }
 
-    private Converter<Long, BigDecimal> lowerBorderWorkConverter(RepairWorkRepository repository, Supplier<CurrencyUnit> currencyUnitSupplier) {
+    private Converter<Long, BigDecimal> lowerBorderWorkConverter(RepairWorkRepository repository,
+            Supplier<CurrencyUnit> currencyUnitSupplier) {
         return mappingContext -> Optional.ofNullable(mappingContext.getSource())
                 .map(s -> repository.findPriceByWork_IdAndCurrency_Code(s, currencyUnitSupplier.get().getCurrencyCode())
                         .orElseThrow()
@@ -95,7 +99,8 @@ public class ModelMapperConfig {
                 .orElse(null);
     }
 
-    private Converter<Long, BigDecimal> upperBorderBorderWorkConverter(RepairWorkRepository repository, Supplier<CurrencyUnit> currencyUnitSupplier) {
+    private Converter<Long, BigDecimal> upperBorderBorderWorkConverter(RepairWorkRepository repository,
+            Supplier<CurrencyUnit> currencyUnitSupplier) {
         return mappingContext -> Optional.ofNullable(mappingContext.getSource())
                 .map(s -> repository.findPriceByWork_IdAndCurrency_Code(s, currencyUnitSupplier.get().getCurrencyCode())
                         .orElseThrow()

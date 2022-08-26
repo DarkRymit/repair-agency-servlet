@@ -69,11 +69,11 @@ public class User implements Serializable {
     public User() {
     }
 
-    private static Set<Role> $default$roles() {
+    private static Set<Role> defaultRoles() {
         return new HashSet<>();
     }
 
-    private static Set<Wallet> $default$wallets() {
+    private static Set<Wallet> defaultWallets() {
         return new HashSet<>();
     }
 
@@ -235,21 +235,6 @@ public class User implements Serializable {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public UserBuilder toBuilder() {
-        return new UserBuilder().id(this.id)
-                .username(this.username)
-                .email(this.email)
-                .password(this.password)
-                .firstName(this.firstName)
-                .lastName(this.lastName)
-                .phone(this.phone)
-                .roles(this.roles)
-                .wallets(this.wallets)
-                .creationDate(this.creationDate)
-                .lastModifiedBy(this.lastModifiedBy)
-                .lastModifiedDate(this.lastModifiedDate);
-    }
-
     public static class UserBuilder {
         private Long id;
         private String username;
@@ -258,10 +243,10 @@ public class User implements Serializable {
         private String firstName;
         private String lastName;
         private String phone;
-        private Set<Role> roles$value;
-        private boolean roles$set;
-        private Set<Wallet> wallets$value;
-        private boolean wallets$set;
+        private Set<Role> rolesValue;
+        private boolean rolesSet;
+        private Set<Wallet> walletsValue;
+        private boolean walletsSet;
         private Instant creationDate;
         private String lastModifiedBy;
         private Instant lastModifiedDate;
@@ -305,14 +290,14 @@ public class User implements Serializable {
         }
 
         public UserBuilder roles(Set<Role> roles) {
-            this.roles$value = roles;
-            this.roles$set = true;
+            this.rolesValue = roles;
+            this.rolesSet = true;
             return this;
         }
 
         public UserBuilder wallets(Set<Wallet> wallets) {
-            this.wallets$value = wallets;
-            this.wallets$set = true;
+            this.walletsValue = wallets;
+            this.walletsSet = true;
             return this;
         }
 
@@ -332,20 +317,20 @@ public class User implements Serializable {
         }
 
         public User build() {
-            Set<Role> roles$value = this.roles$value;
-            if (!this.roles$set) {
-                roles$value = User.$default$roles();
+            Set<Role> rolesValueFinal = this.rolesValue;
+            if (!this.rolesSet) {
+                rolesValueFinal = User.defaultRoles();
             }
-            Set<Wallet> wallets$value = this.wallets$value;
-            if (!this.wallets$set) {
-                wallets$value = User.$default$wallets();
+            Set<Wallet> walletsValueFinal = this.walletsValue;
+            if (!this.walletsSet) {
+                walletsValueFinal = User.defaultWallets();
             }
-            return new User(id, username, email, password, firstName, lastName, phone, roles$value, wallets$value,
+            return new User(id, username, email, password, firstName, lastName, phone, rolesValueFinal, walletsValueFinal,
                     creationDate, lastModifiedBy, lastModifiedDate);
         }
 
         public String toString() {
-            return "User.UserBuilder(id=" + this.id + ", username=" + this.username + ", email=" + this.email + ", password=" + this.password + ", firstName=" + this.firstName + ", lastName=" + this.lastName + ", phone=" + this.phone + ", roles$value=" + this.roles$value + ", wallets$value=" + this.wallets$value + ", creationDate=" + this.creationDate + ", lastModifiedBy=" + this.lastModifiedBy + ", lastModifiedDate=" + this.lastModifiedDate + ")";
+            return "User.UserBuilder(id=" + this.id + ", username=" + this.username + ", email=" + this.email + ", password=" + this.password + ", firstName=" + this.firstName + ", lastName=" + this.lastName + ", phone=" + this.phone + ", roles$value=" + this.rolesValue + ", wallets$value=" + this.walletsValue + ", creationDate=" + this.creationDate + ", lastModifiedBy=" + this.lastModifiedBy + ", lastModifiedDate=" + this.lastModifiedDate + ")";
         }
     }
 }
