@@ -6,6 +6,7 @@ import com.epam.finalproject.framework.context.ApplicationListener;
 import com.epam.finalproject.model.entity.PasswordResetToken;
 import com.epam.finalproject.model.entity.User;
 import com.epam.finalproject.model.event.OnPasswordResetEvent;
+import com.epam.finalproject.service.EmailService;
 import com.epam.finalproject.service.PasswordResetTokenService;
 import org.slf4j.Logger;
 
@@ -13,10 +14,13 @@ import org.slf4j.Logger;
 public class PasswordResetListener implements ApplicationListener<OnPasswordResetEvent> {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(PasswordResetListener.class);
-    PasswordResetTokenService passwordResetTokenService;
+    private final PasswordResetTokenService passwordResetTokenService;
 
-    public PasswordResetListener(PasswordResetTokenService passwordResetTokenService) {
+    private final EmailService emailService;
+
+    public PasswordResetListener(PasswordResetTokenService passwordResetTokenService, EmailService emailService) {
         this.passwordResetTokenService = passwordResetTokenService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -32,7 +36,8 @@ public class PasswordResetListener implements ApplicationListener<OnPasswordRese
     private void confirmRegistration(final OnPasswordResetEvent event) {
         final User user = event.getUser();
         PasswordResetToken token = passwordResetTokenService.createTokenForUser(user);
-        log.info("Create for user " + user.getUsername() + " passwordResetToken : " + token);
+        log.info("Create for user {} verifyToken : {}", user.getUsername(), token);
+        emailService.sendPasswordResetLetter(event, token);
     }
 
 }

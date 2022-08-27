@@ -42,11 +42,7 @@ public class AnnotationBeanDefinitionBuilder {
     private static Class<?> getSubBeanClass(Method method, Bean beanAnnotation) {
         Class<?> clazz = beanAnnotation.clazz();
         if (clazz.equals(Bean.DEFAULT.class)) {
-            Class<?> returnType = method.getReturnType();
-            if (returnType.isInterface()) {
-                throw new RuntimeException();
-            }
-            return returnType;
+            return method.getReturnType();
         }
         return clazz;
     }

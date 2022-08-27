@@ -6,6 +6,7 @@ import com.epam.finalproject.framework.context.ApplicationListener;
 import com.epam.finalproject.model.entity.User;
 import com.epam.finalproject.model.entity.VerificationToken;
 import com.epam.finalproject.model.event.OnRegistrationCompleteEvent;
+import com.epam.finalproject.service.EmailService;
 import com.epam.finalproject.service.VerificationTokenService;
 import org.slf4j.Logger;
 
@@ -13,10 +14,13 @@ import org.slf4j.Logger;
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(RegistrationListener.class);
-    VerificationTokenService verificationTokenService;
+    private final VerificationTokenService verificationTokenService;
 
-    public RegistrationListener(VerificationTokenService verificationTokenService) {
+    private final EmailService emailService;
+
+    public RegistrationListener(VerificationTokenService verificationTokenService, EmailService emailService) {
         this.verificationTokenService = verificationTokenService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -32,7 +36,8 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private void confirmRegistration(final OnRegistrationCompleteEvent event) {
         final User user = event.getUser();
         VerificationToken token = verificationTokenService.createTokenForUser(user);
-        log.info("Create for user " + user.getUsername() + " verifyToken : " + token);
+        log.info("Create for user {} verifyToken : {}", user.getUsername(), token);
+        emailService.sendVerificationLetter(event, token);
     }
 
 }
