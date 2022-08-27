@@ -88,9 +88,9 @@ public class RequestHandlerResolver {
 
     private boolean isPathMatchPattern(String realPath, URLWildcardPattern urlPattern) {
         Pattern pattern = urlPattern.getRegexPattern();
-        log.trace("Start match regex {}", pattern.pattern());
+        log.trace("Start match regex {}", pattern);
         boolean result = pattern.matcher(realPath).matches();
-        log.trace("Result {} to regex {} from origin {} for path {} ", result, pattern.pattern(), urlPattern.getOriginalValue(), realPath);
+        log.trace("Result {} to regex {} from origin {} for path {} ", result, pattern, urlPattern.getOriginalValue(), realPath);
         return result;
     }
 }
