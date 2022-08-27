@@ -3,6 +3,7 @@ package com.epam.finalproject.controller;
 import com.epam.finalproject.currency.context.CurrencyUnitContextHolder;
 import com.epam.finalproject.dto.*;
 import com.epam.finalproject.framework.security.UserDetails;
+import com.epam.finalproject.framework.security.annotation.PreAuthorize;
 import com.epam.finalproject.framework.web.annotation.*;
 import com.epam.finalproject.model.entity.AppCurrency;
 import com.epam.finalproject.request.ReceiptResponseCreateRequest;
@@ -45,6 +46,7 @@ public class ReceiptController {
     }
 
     @GetMapping("/{id}/update")
+    @PreAuthorize("hasRole('MANAGER')")
     String updatePage(HttpServletRequest request, UserDetails userDetails, @PathVariable("id") Long id) {
         ReceiptDTO receipt = receiptService.findById(id);
         List<ReceiptStatusFlowDTO> flows = receiptStatusFlowService.listAllAvailableForUser(receipt.getStatus().getId(),userDetails.getUsername());
@@ -55,6 +57,7 @@ public class ReceiptController {
         return "orderUpdate";
     }
     @PostMapping("/{id}/update")
+    @PreAuthorize("hasRole('MANAGER')")
     String update(@RequestJsonObject ReceiptUpdateRequest updateRequest, @PathVariable("id") Long id) {
         updateRequest.setId(id);
         ReceiptDTO receipt = receiptService.update(updateRequest);
@@ -62,6 +65,7 @@ public class ReceiptController {
     }
 
     @PostMapping("/{id}/response/create")
+    @PreAuthorize("hasRole('CUSTOMER')")
     String responseCreate( @RequestObject ReceiptResponseCreateRequest createRequest, UserDetails userDetails, @PathVariable("id") Long id) {
         createRequest.setReceiptId(id);
         receiptResponseService.createNew(createRequest,userDetails.getUsername());
@@ -75,6 +79,7 @@ public class ReceiptController {
     }
 
     @GetMapping(value ="/{id}/pay")
+    @PreAuthorize("hasRole('CUSTOMER')")
     String pay(HttpServletRequest request,  UserDetails userDetails, @PathVariable("id") Long id) {
         ReceiptDTO receipt = receiptService.findById(id);
         List<WalletDTO> wallets = walletService.findAllByUsername(userDetails.getUsername());
@@ -84,6 +89,7 @@ public class ReceiptController {
     }
 
     @PostMapping("/{id}/pay")
+    @PreAuthorize("hasRole('CUSTOMER')")
     String pay(UserDetails userDetails,@RequestObject ReceiptPayRequest payRequest, @PathVariable("id") Long id) {
         payRequest.setId(id);
         ReceiptDTO receipt = receiptService.pay(payRequest,userDetails.getUsername());
@@ -104,11 +110,13 @@ public class ReceiptController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('CUSTOMER')")
     String create(UserDetails userDetails, @RequestJsonObject ReceiptCreateRequest createRequest) {
         ReceiptDTO receipt = receiptService.createNew(createRequest,userDetails.getUsername());
         return "redirect:/order/"+receipt.getId();
     }
     @GetMapping("/create")
+    @PreAuthorize("hasRole('CUSTOMER')")
     String create(HttpServletRequest request, @RequestParam("category") String category) {
         RepairCategoryDTO repairCategory = repairCategoryService.findByKeyName(category);
         List<RepairWorkDTO> repairWorks = repairWorkService.findByCategoryKey(category);

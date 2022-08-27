@@ -2,9 +2,15 @@ package com.epam.finalproject.tag;
 
 import com.epam.finalproject.framework.security.Authentication;
 import com.epam.finalproject.framework.security.support.SecurityContextHolder;
+import com.epam.finalproject.framework.security.support.SecurityExpressionSupport;
 import jakarta.servlet.jsp.JspTagException;
 import jakarta.servlet.jsp.jstl.core.ConditionalTagSupport;
 import org.slf4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.epam.finalproject.framework.security.util.SecurityUtils.*;
 
 public class AuthorizeTagHandler extends ConditionalTagSupport {
 
@@ -18,34 +24,12 @@ public class AuthorizeTagHandler extends ConditionalTagSupport {
     @Override
     protected boolean condition() throws JspTagException {
         log.trace("Security Context jsp : {}",SecurityContextHolder.getContext());
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (expr.equals("isAuthenticated()")){
-            return isAuthenticated(auth);
-        }else if (expr.equals("isAnonymous()")){
-            return isAnonymous(auth);
-        }else if(expr.startsWith("hasRole(")&&expr.endsWith(")")){
-            if(auth == null){
-                return false;
-            }
-            return isHaveRole(auth, expr.substring("hasRole(".length(), expr.length() - 1));
-        }
-        return false;
-    }
+        SecurityExpressionSupport support = new SecurityExpressionSupport( SecurityContextHolder.getContext());
+        Map<String,Object> contextMap = new HashMap<>();
+        contextMap.put("req",pageContext.getRequest());
+        contextMap.put("res",pageContext.getResponse());
+        return evalExpression(expr, support,contextMap);
 
-    private boolean isHaveRole(Authentication auth,String role) {
-        return auth.getAuthorities()
-                .stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority()
-                        .equals("ROLE_" + role));
-    }
-
-    private boolean isAnonymous(Authentication auth) {
-        return auth == null;
-    }
-
-
-    private boolean isAuthenticated(Authentication auth) {
-        return auth != null;
     }
 
     @Override

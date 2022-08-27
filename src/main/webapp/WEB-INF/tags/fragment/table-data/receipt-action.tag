@@ -6,13 +6,13 @@
     <a class="btn btn-outline-primary" role="button" <ext:href path="/order/${receipt.id.toString()}"/> >
         View
     </a>
-    <sec:authorize expr="hasRole(MANAGER)">
+    <sec:authorize expr="hasRole('MANAGER')">
         <a class="btn btn-outline-primary" role="button" <ext:href path="/order/${receipt.id.toString()}/update"/> >
             Update
         </a>
     </sec:authorize>
     <c:if test="${receipt.status.name.equals('WAIT_FOR_PAYMENT')}">
-        <sec:authorize expr="hasRole(CUSTOMER)">
+        <sec:authorize expr="hasRole('CUSTOMER')">
             <a class="btn btn-outline-primary" role="button" <ext:href path="/order/${receipt.id.toString()}/pay"/> >
                 Pay
             </a>
@@ -31,44 +31,11 @@
                         <form id="status-form" method="post" <ext:action
                                 path="/order/${receipt.id.toString()}/status/change"/> >
                             <input name="statusId" value="${flow.toStatus.id}" type="hidden"/>
-                            <c:choose>
-                                <c:when test="${flow.toStatus.name.equals('CREATED')}">
-                                    <button class="btn dropdown-item btn-outline-primary"
-                                            role="button"
-                                            type="submit">Created
-                                    </button>
-                                </c:when>
-                                <c:when test="${flow.toStatus.name.equals('WAIT_FOR_PAYMENT')}">
-                                    <button class="btn dropdown-item btn-outline-primary"
-                                            role="button"
-                                            type="submit">Wait for payment
-                                    </button>
-                                </c:when>
-                                <c:when test="${flow.toStatus.name.equals('PAID')}">
-                                    <button class="btn dropdown-item btn-outline-primary"
-                                            role="button"
-                                            type="submit">Paid
-                                    </button>
-                                </c:when>
-                                <c:when test="${flow.toStatus.name.equals('IN_WORK')}">
-                                    <button class="btn dropdown-item btn-outline-primary"
-                                            role="button"
-                                            type="submit">In work
-                                    </button>
-                                </c:when>
-                                <c:when test="${flow.toStatus.name.equals('DONE')}">
-                                    <button class="btn dropdown-item btn-outline-primary"
-                                            role="button"
-                                            type="submit"> Done
-                                    </button>
-                                </c:when>
-                                <c:when test="${flow.toStatus.name.equals('CANCELED')}">
-                                    <button class="btn dropdown-item btn-outline-primary"
+                            <button class="btn dropdown-item btn-outline-primary"
                                     role="button"
-                                    type="submit">Canceled
-                                    </button>
-                                </c:when>
-                            </c:choose>
+                                    type="submit">
+                                <ext:statusGet var="${flow.toStatus.name}"/>
+                            </button>
                         </form>
                     </li>
                 </c:if>

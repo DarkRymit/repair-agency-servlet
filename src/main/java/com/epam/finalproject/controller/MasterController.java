@@ -6,6 +6,7 @@ import com.epam.finalproject.dto.ReceiptStatusFlowDTO;
 import com.epam.finalproject.framework.data.Page;
 import com.epam.finalproject.framework.data.PageRequest;
 import com.epam.finalproject.framework.security.UserDetails;
+import com.epam.finalproject.framework.security.annotation.PreAuthorize;
 import com.epam.finalproject.framework.web.annotation.*;
 import com.epam.finalproject.request.search.ReceiptWithMasterSearchRequest;
 import com.epam.finalproject.service.ReceiptResponseService;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/master")
+@PreAuthorize("hasRole('MASTER')")
 public class MasterController {
 
     public static final String ACTIVE = "active";

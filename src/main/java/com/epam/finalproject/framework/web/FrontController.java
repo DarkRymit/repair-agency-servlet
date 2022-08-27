@@ -1,12 +1,8 @@
 package com.epam.finalproject.framework.web;
 
 
-import com.epam.finalproject.currency.context.CurrencyUnitContextHolder;
-import com.epam.finalproject.currency.context.SimpleCurrencyUnitContext;
 import com.epam.finalproject.framework.context.ApplicationContext;
 import com.epam.finalproject.framework.context.support.ApplicationContextHolder;
-import com.epam.finalproject.framework.security.support.SecurityContextHolder;
-import com.epam.finalproject.framework.security.web.SecurityContextRepository;
 import com.epam.finalproject.framework.web.servlet.View;
 import com.epam.finalproject.framework.web.servlet.ViewHandlerManager;
 import com.epam.finalproject.framework.web.support.RequestArgumentAdapter;
@@ -19,11 +15,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 
-import javax.money.Monetary;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @WebServlet("/")
 public class FrontController extends HttpServlet {
@@ -37,7 +31,6 @@ public class FrontController extends HttpServlet {
 
     private transient FlashAttributesManager flashAttributesManager;
 
-    private transient SecurityContextRepository securityContextRepository;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -49,7 +42,8 @@ public class FrontController extends HttpServlet {
         handleRequest(req, resp);
     }
 
-    private void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void handleRequest(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         log.trace("Started handling request");
         WebHttpPair webHttpPair = new WebHttpPair(request, response);
         Throwable cause = null;
@@ -65,7 +59,6 @@ public class FrontController extends HttpServlet {
                 }
                 handler = container.getHandler();
 
-                SecurityContextHolder.setContext(securityContextRepository.loadContext(request));
                 Map<String, Object> flashAttributes = flashAttributesManager.retrieveAndCleanFlashMap(request);
                 if (flashAttributes != null) {
                     flashAttributes.forEach(request::setAttribute);
@@ -85,17 +78,14 @@ public class FrontController extends HttpServlet {
 
             } catch (Exception e) {
                 subCause = e;
-                throw subCause;
-            } catch (Throwable e) {
-                subCause = new ServletException(e);
-                throw subCause;
+                throw e;
             } finally {
                 handlerManager.afterCompletion(handler, webHttpPair, subCause);
             }
-        } catch (IOException | ServletException e) {
+        } catch (RuntimeException | IOException | ServletException e) {
             cause = e;
             throw e;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             cause = e;
             throw new ServletException(e);
         } finally {
@@ -119,7 +109,7 @@ public class FrontController extends HttpServlet {
         return view;
     }
 
-    private Object processHandler(WebHttpPair webHttpPair, RequestHandlerContainer container) {
+    private Object processHandler(WebHttpPair webHttpPair, RequestHandlerContainer container) throws Exception {
         log.trace("Resolved web handler {}", container);
         List<Object> args = argumentAdapter.adapt(webHttpPair, container);
         log.trace("Adapt web handler args {}", args);
@@ -134,7 +124,6 @@ public class FrontController extends HttpServlet {
         handlerManager = applicationContext.getBean(RequestHandlerManager.class);
         argumentAdapter = applicationContext.getBean(RequestArgumentAdapter.class);
         flashAttributesManager = applicationContext.getBean(FlashAttributesManager.class);
-        securityContextRepository = applicationContext.getBean(SecurityContextRepository.class);
         stringToViewResolver = applicationContext.getBean(StringToViewResolver.class);
         viewHandlerManager = applicationContext.getBean(ViewHandlerManager.class);
     }

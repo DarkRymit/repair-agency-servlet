@@ -7,6 +7,7 @@ import com.epam.finalproject.dto.WalletDTO;
 import com.epam.finalproject.framework.data.Page;
 import com.epam.finalproject.framework.data.PageRequest;
 import com.epam.finalproject.framework.security.UserDetails;
+import com.epam.finalproject.framework.security.annotation.PreAuthorize;
 import com.epam.finalproject.framework.web.annotation.*;
 import com.epam.finalproject.request.search.ReceiptWithCustomerSearchRequest;
 import com.epam.finalproject.service.ReceiptResponseService;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/customer")
+@PreAuthorize("hasRole('CUSTOMER')")
 public class CustomerController {
 
     public static final String ACTIVE = "active";

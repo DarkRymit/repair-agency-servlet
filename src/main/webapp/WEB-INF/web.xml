@@ -3,22 +3,34 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-  <display-name>Final Project</display-name>
-  <jsp-config>
-    <jsp-property-group>
-      <url-pattern>*.jspf</url-pattern>
-      <page-encoding>UTF-8</page-encoding>
-    </jsp-property-group>
-    <jsp-property-group>
-      <url-pattern>*.jsp</url-pattern>
-      <page-encoding>UTF-8</page-encoding>
-    </jsp-property-group>
-  </jsp-config>
-  <servlet-mapping>
-    <servlet-name>default</servlet-name>
-    <url-pattern>/static/*</url-pattern>
-  </servlet-mapping>
-  <error-page>
-    <location>/WEB-INF/error.jsp</location>
-  </error-page>
+    <display-name>Final Project</display-name>
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jspf</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
+    </jsp-config>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/static/*</url-pattern>
+    </servlet-mapping>
+    <error-page>
+        <error-code>
+            403
+        </error-code>
+        <location>/WEB-INF/403.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>
+            com.epam.finalproject.framework.security.AccessDeniedException
+        </exception-type>
+        <location>/WEB-INF/403.jsp</location>
+    </error-page>
+    <error-page>
+        <location>/WEB-INF/error.jsp</location>
+    </error-page>
 </web-app>

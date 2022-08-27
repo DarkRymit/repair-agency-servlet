@@ -11,6 +11,7 @@ import com.epam.finalproject.framework.web.annotation.*;
 import com.epam.finalproject.framework.web.servlet.HandlerInterceptor;
 import com.epam.finalproject.framework.web.servlet.View;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 
@@ -79,7 +80,7 @@ public class RequestHandlerManager {
     }
 
 
-    public Object invoke(RequestHandler handler, List<Object> args) {
+    public Object invoke(RequestHandler handler, List<Object> args) throws Exception {
         log.trace("Call invoke with handler {} args {}", handler, args);
         Object controller = factory.getBean(handler.getControllerBeanName());
         log.trace("found controller {}", controller);
@@ -89,8 +90,13 @@ public class RequestHandlerManager {
             Object result = method.invoke(controller, args.toArray());
             log.trace("invoke on method {} with controller {} with args {}", method, controller, args);
             return result;
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new ServletException(e);
+        }catch (InvocationTargetException e){
+            if (e.getCause() instanceof Exception){
+                throw (Exception) e.getCause();
+            }
+            throw new ServletException(e.getCause());
         }
     }
 

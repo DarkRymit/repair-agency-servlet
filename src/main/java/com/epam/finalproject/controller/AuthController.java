@@ -5,6 +5,7 @@ import com.epam.finalproject.framework.security.Authentication;
 import com.epam.finalproject.framework.security.AuthenticationException;
 import com.epam.finalproject.framework.security.UserDetails;
 import com.epam.finalproject.framework.security.UserDetailsService;
+import com.epam.finalproject.framework.security.annotation.PreAuthorize;
 import com.epam.finalproject.framework.security.authentication.UsernamePasswordAuthenticationToken;
 import com.epam.finalproject.framework.security.password.PasswordEncoder;
 import com.epam.finalproject.framework.security.support.SecurityContext;
@@ -63,12 +64,14 @@ public class AuthController {
     }
 
     @GetMapping("/signup")
+    @PreAuthorize("isAnonymous()")
     String signUpPage() {
         return "signup";
     }
 
 
     @PostMapping("/signup")
+    @PreAuthorize("isAnonymous()")
     String signUp(@RequestObject SignUpRequest form, RedirectAttributes redirectedAttributes, HttpServletRequest request) {
         boolean isErrorsExists = false;
         if (userService.existsByUsername(form.getUsername())) {
@@ -83,12 +86,13 @@ public class AuthController {
             return "redirect:/auth/signup";
         }
         User user = userService.signUpNewUserAccount(form);
-        log.info("Created user:" + user.toString());
+        log.info("Created user: {}",user);
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request.getLocale(), getAppUrl(request)));
         return "redirect:/auth/confirmRegister";
     }
 
     @GetMapping("/signin")
+    @PreAuthorize("isAnonymous()")
     String signInPage(@RequestParam(value = "error", required = false) String error, HttpServletRequest request) {
         if(error!=null)
             request.setAttribute("error","true");
@@ -96,11 +100,15 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
+    @PreAuthorize("isAnonymous()")
     public String signIn(HttpServletRequest request, HttpServletResponse response,@RequestParam("username") String username,@RequestParam("password") String password){
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if (!passwordEncoder.matches(password, userDetails.getPassword())){
             throw new AuthenticationException("Password not match");
+        }
+        if (!userDetails.isEnabled()){
+            throw new AuthenticationException("Not enabled");
         }
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails,userDetails.getAuthorities());
 
@@ -110,6 +118,7 @@ public class AuthController {
     }
 
     @GetMapping("/signout")
+    @PreAuthorize("isAuthenticated()")
     String signOut(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null){
@@ -125,17 +134,20 @@ public class AuthController {
     }
 
     @GetMapping("/confirmRegister")
+    @PreAuthorize("isAnonymous()")
     String confirmRegisterPage(){
         return "confirmRegister";
     }
 
     @GetMapping("/confirmRegister/{token}")
+    @PreAuthorize("isAnonymous()")
     String confirmRegisterTokenPage(@PathVariable("token") String token, HttpServletRequest request){
         request.setAttribute("token",token);
         return "confirmRegisterToken";
     }
 
     @PostMapping("/confirmRegister/{token}")
+    @PreAuthorize("isAnonymous()")
     String confirmRegisterToken(@PathVariable("token") String token){
         Optional<VerificationToken> optionalVerificationToken = verificationTokenService.findByToken(token);
         if (optionalVerificationToken.isEmpty()){
@@ -146,10 +158,12 @@ public class AuthController {
     }
 
     @GetMapping("/resetpassword")
+    @PreAuthorize("isAnonymous()")
     String resetPasswordPage(){
         return "resetPassword";
     }
     @PostMapping("/resetpassword")
+    @PreAuthorize("isAnonymous()")
     String resetPassword(HttpServletRequest request,@RequestObject PasswordResetRequest resetRequest){
         User user = userService.findByEmail(resetRequest.getEmail()).orElseThrow();
         eventPublisher.publishEvent(new OnPasswordResetEvent(user, request.getLocale(), getAppUrl(request)));
@@ -157,15 +171,18 @@ public class AuthController {
     }
 
     @GetMapping("/resetpassword/confirm")
+    @PreAuthorize("isAnonymous()")
     String resetPasswordConfirmPage(){
         return "resetPasswordConfirm";
     }
 
     @GetMapping("/resetpassword/confirm/{token}")
+    @PreAuthorize("isAnonymous()")
     String resetPasswordConfirmTokenPage(@PathVariable("token") String token){
         return "resetPasswordConfirmToken";
     }
     @PostMapping("/resetpassword/confirm/{token}")
+    @PreAuthorize("isAnonymous()")
     String resetPasswordConfirmToken(@PathVariable("token") String token,@RequestObject NewPasswordRequest newPasswordRequest){
         Optional<PasswordResetToken> optionalPasswordResetRequest = passwordResetTokenService.findByToken(token);
         if (optionalPasswordResetRequest.isEmpty()){

@@ -7,6 +7,7 @@ import com.epam.finalproject.dto.UserDTO;
 import com.epam.finalproject.framework.data.Page;
 import com.epam.finalproject.framework.data.PageRequest;
 import com.epam.finalproject.framework.security.UserDetails;
+import com.epam.finalproject.framework.security.annotation.PreAuthorize;
 import com.epam.finalproject.framework.web.annotation.*;
 import com.epam.finalproject.request.search.MasterSearchRequest;
 import com.epam.finalproject.request.search.ReceiptSearchRequest;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/manager")
+@PreAuthorize("hasRole('MANAGER')")
 public class ManagerController {
 
     public static final String ACTIVE = "active";
