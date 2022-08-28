@@ -1,8 +1,13 @@
 package com.epam.finalproject.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Objects;
 
 public class PasswordResetRequest {
+    @NotBlank
+    @Email
     String email;
 
     public PasswordResetRequest(String email) {

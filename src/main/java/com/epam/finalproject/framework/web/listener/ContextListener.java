@@ -7,6 +7,7 @@ import com.epam.finalproject.framework.beans.factory.config.BeanPostProcessor;
 import com.epam.finalproject.framework.beans.factory.config.BeanScope;
 import com.epam.finalproject.framework.beans.factory.exception.BeansException;
 import com.epam.finalproject.framework.beans.factory.support.DefaultBeanDefinition;
+import com.epam.finalproject.framework.context.ApplicationContext;
 import com.epam.finalproject.framework.context.ManualConfigurableApplicationContext;
 import com.epam.finalproject.framework.scanner.ClassPathScanner;
 import com.epam.finalproject.framework.web.annotation.Controller;
@@ -15,6 +16,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import jakarta.validation.ValidatorFactory;
 import org.slf4j.Logger;
 
 import java.util.Set;
@@ -39,7 +41,15 @@ public class ContextListener implements ServletContextListener {
         log.trace("Found classes {}",classSet);
         classSet.forEach(context::registerBean);
         context.setup();
-        sce.getServletContext().setAttribute("applicationContext", context);
+        servletContext.setAttribute("applicationContext", context);
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        ServletContext servletContext = sce.getServletContext();
+        ApplicationContext context = (ApplicationContext) servletContext.getAttribute("applicationContext");
+        ValidatorFactory factory = context.getBean(ValidatorFactory.class);
+        factory.close();
     }
 
     public BeanPostProcessor beanPostProcessor() {

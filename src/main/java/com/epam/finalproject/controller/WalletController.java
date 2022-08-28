@@ -6,6 +6,7 @@ import com.epam.finalproject.framework.web.annotation.*;
 import com.epam.finalproject.request.AddMoneyRequest;
 import com.epam.finalproject.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 
 @Controller
@@ -21,7 +22,7 @@ public class WalletController {
 
     @PostMapping("/addMoney")
     @PreAuthorize("hasRole('MANAGER')")
-    String addMoneyPage(HttpServletRequest request,@RequestObject AddMoneyRequest moneyRequest,@RequestParam("redirectUrl") String redirectUrl) {
+    String addMoneyPage(HttpServletRequest request,@RequestObject @Valid AddMoneyRequest moneyRequest,@RequestParam("redirectUrl") String redirectUrl) {
         WalletDTO wallet = walletService.addMoney(moneyRequest);
         log.trace("Wallet updated {}",wallet);
         return "redirect:" + redirectUrl;

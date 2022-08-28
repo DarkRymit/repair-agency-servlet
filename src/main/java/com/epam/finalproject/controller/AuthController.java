@@ -28,6 +28,7 @@ import com.epam.finalproject.service.VerificationTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -72,7 +73,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     @PreAuthorize("isAnonymous()")
-    String signUp(@RequestObject SignUpRequest form, RedirectAttributes redirectedAttributes, HttpServletRequest request) {
+    String signUp(@RequestObject @Valid SignUpRequest form, RedirectAttributes redirectedAttributes, HttpServletRequest request) {
         boolean isErrorsExists = false;
         if (userService.existsByUsername(form.getUsername())) {
             isErrorsExists = true;
@@ -164,7 +165,7 @@ public class AuthController {
     }
     @PostMapping("/resetpassword")
     @PreAuthorize("isAnonymous()")
-    String resetPassword(HttpServletRequest request,@RequestObject PasswordResetRequest resetRequest){
+    String resetPassword(HttpServletRequest request,@RequestObject @Valid PasswordResetRequest resetRequest){
         User user = userService.findByEmail(resetRequest.getEmail()).orElseThrow();
         eventPublisher.publishEvent(new OnPasswordResetEvent(user, request.getLocale(), getAppUrl(request)));
         return "redirect:/auth/resetpassword/confirm";
@@ -178,17 +179,18 @@ public class AuthController {
 
     @GetMapping("/resetpassword/confirm/{token}")
     @PreAuthorize("isAnonymous()")
-    String resetPasswordConfirmTokenPage(@PathVariable("token") String token){
+    String resetPasswordConfirmTokenPage(HttpServletRequest request,@PathVariable("token") String token){
+        request.setAttribute("token",token);
         return "resetPasswordConfirmToken";
     }
     @PostMapping("/resetpassword/confirm/{token}")
     @PreAuthorize("isAnonymous()")
-    String resetPasswordConfirmToken(@PathVariable("token") String token,@RequestObject NewPasswordRequest newPasswordRequest){
-        Optional<PasswordResetToken> optionalPasswordResetRequest = passwordResetTokenService.findByToken(token);
-        if (optionalPasswordResetRequest.isEmpty()){
+    String resetPasswordConfirmToken(@PathVariable("token") String token,@RequestObject @Valid NewPasswordRequest newPasswordRequest){
+        Optional<PasswordResetToken> optionalPasswordResetToken = passwordResetTokenService.findByToken(token);
+        if (optionalPasswordResetToken.isEmpty()){
             return "redirect:/auth/resetpassword/confirm?errorNoFound";
         }
-        PasswordResetToken passwordResetToken = optionalPasswordResetRequest.get();
+        PasswordResetToken passwordResetToken = optionalPasswordResetToken.get();
         if (passwordResetTokenService.isExpired(passwordResetToken)){
             return "redirect:/auth/resetpassword/confirm?errorExp";
         }

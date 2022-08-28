@@ -1,20 +1,36 @@
 package com.epam.finalproject.request;
 
 
+import com.epam.finalproject.framework.validation.validators.PhoneNumber;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.Objects;
 
 public class SignUpRequest {
 
+    @NotBlank
+    @Size(min = 8, max = 14)
     private String username;
 
+    @Email
     private String email;
 
+    @NotBlank
+    @Size(min = 8, max = 14)
     private String password;
 
+    @NotBlank
+    @Size(min = 1, max = 20)
     private String firstName;
 
+    @NotBlank
+    @Size(min = 1, max = 20)
     private String lastName;
 
+    @NotBlank
+    @PhoneNumber
     private String phone;
 
     public SignUpRequest(String username, String email, String password, String firstName, String lastName,
@@ -66,44 +82,44 @@ public class SignUpRequest {
         return this.username;
     }
 
-    public String getEmail() {
-        return this.email;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public String getFirstName() {
-        return this.firstName;
-    }
-
-    public String getLastName() {
-        return this.lastName;
-    }
-
-    public String getPhone() {
-        return this.phone;
-    }
-
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return this.email;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
+    public String getPassword() {
+        return this.password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getFirstName() {
+        return this.firstName;
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    public String getLastName() {
+        return this.lastName;
+    }
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getPhone() {
+        return this.phone;
     }
 
     public void setPhone(String phone) {

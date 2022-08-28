@@ -1,17 +1,26 @@
 package com.epam.finalproject.request.receipt.create;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Objects;
 import java.util.Set;
 
 public class ReceiptCreateRequest {
 
+    @NotNull
     Long categoryId;
 
+    @NotBlank
     String priceCurrency;
 
+    @Valid
     Set<ReceiptItemCreateRequest> receiptItems;
 
+    @Valid
     ReceiptDeliveryCreateRequest receiptDelivery;
+
 
     String note;
 

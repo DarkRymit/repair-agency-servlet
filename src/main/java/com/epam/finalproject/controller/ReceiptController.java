@@ -12,6 +12,7 @@ import com.epam.finalproject.request.receipt.pay.ReceiptPayRequest;
 import com.epam.finalproject.request.receipt.update.ReceiptUpdateRequest;
 import com.epam.finalproject.service.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -58,7 +59,7 @@ public class ReceiptController {
     }
     @PostMapping("/{id}/update")
     @PreAuthorize("hasRole('MANAGER')")
-    String update(@RequestJsonObject ReceiptUpdateRequest updateRequest, @PathVariable("id") Long id) {
+    String update(@RequestJsonObject @Valid ReceiptUpdateRequest updateRequest, @PathVariable("id") Long id) {
         updateRequest.setId(id);
         ReceiptDTO receipt = receiptService.update(updateRequest);
         return "redirect:/order/"+receipt.getId();
@@ -66,7 +67,7 @@ public class ReceiptController {
 
     @PostMapping("/{id}/response/create")
     @PreAuthorize("hasRole('CUSTOMER')")
-    String responseCreate( @RequestObject ReceiptResponseCreateRequest createRequest, UserDetails userDetails, @PathVariable("id") Long id) {
+    String responseCreate( @RequestObject @Valid ReceiptResponseCreateRequest createRequest, UserDetails userDetails, @PathVariable("id") Long id) {
         createRequest.setReceiptId(id);
         receiptResponseService.createNew(createRequest,userDetails.getUsername());
         return "redirect:/order/"+id;
@@ -90,7 +91,7 @@ public class ReceiptController {
 
     @PostMapping("/{id}/pay")
     @PreAuthorize("hasRole('CUSTOMER')")
-    String pay(UserDetails userDetails,@RequestObject ReceiptPayRequest payRequest, @PathVariable("id") Long id) {
+    String pay(UserDetails userDetails,@RequestObject @Valid ReceiptPayRequest payRequest, @PathVariable("id") Long id) {
         payRequest.setId(id);
         ReceiptDTO receipt = receiptService.pay(payRequest,userDetails.getUsername());
         return "redirect:/order/"+receipt.getId();
@@ -111,7 +112,7 @@ public class ReceiptController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('CUSTOMER')")
-    String create(UserDetails userDetails, @RequestJsonObject ReceiptCreateRequest createRequest) {
+    String create(UserDetails userDetails, @RequestJsonObject @Valid ReceiptCreateRequest createRequest) {
         ReceiptDTO receipt = receiptService.createNew(createRequest,userDetails.getUsername());
         return "redirect:/order/"+receipt.getId();
     }

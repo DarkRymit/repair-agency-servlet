@@ -1,15 +1,21 @@
 package com.epam.finalproject.request.receipt.update;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Objects;
 
 public class ReceiptDeliveryUpdateRequest {
 
+    @NotBlank
     private String country;
 
     private String state;
 
+    @NotNull
     private String city;
 
+    @NotBlank
     private String localAddress;
 
     private String postalCode;

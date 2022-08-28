@@ -15,6 +15,7 @@ import com.epam.finalproject.service.ReceiptStatusFlowService;
 import com.epam.finalproject.service.SearchService;
 import com.epam.finalproject.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class CustomerController {
 
 
     @GetMapping("/orders")
-    String ordersPage(HttpServletRequest request, UserDetails userDetails,@RequestObject ReceiptWithCustomerSearchRequest searchRequest) {
+    String ordersPage(HttpServletRequest request, UserDetails userDetails,@RequestObject @Valid ReceiptWithCustomerSearchRequest searchRequest) {
         log.trace("Request {}",searchRequest);
         Page<ReceiptDTO> receipts = searchService.findBySearch(searchRequest,userDetails.getUsername());
         List<ReceiptStatusFlowDTO> flows = receiptStatusFlowService.listAllAvailableForUser(userDetails.getUsername());

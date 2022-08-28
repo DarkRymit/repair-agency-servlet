@@ -16,6 +16,7 @@ import com.epam.finalproject.service.ReceiptResponseService;
 import com.epam.finalproject.service.ReceiptStatusFlowService;
 import com.epam.finalproject.service.SearchService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class ManagerController {
 
 
     @GetMapping("/orders")
-    String ordersPage(HttpServletRequest request, UserDetails userDetails,@RequestObject ReceiptSearchRequest receiptSearchRequest) {
+    String ordersPage(HttpServletRequest request, UserDetails userDetails,@RequestObject @Valid ReceiptSearchRequest receiptSearchRequest) {
         Page<ReceiptDTO> receipts = searchService.findBySearch(receiptSearchRequest);
         List<ReceiptStatusFlowDTO> flows = receiptStatusFlowService.listAllAvailableForUser(userDetails.getUsername());
         request.setAttribute("flows",flows);
@@ -60,7 +61,7 @@ public class ManagerController {
     }
 
     @GetMapping("/users")
-    String usersPage(HttpServletRequest request,@RequestObject UserSearchRequest userSearchRequest) {
+    String usersPage(HttpServletRequest request,@RequestObject @Valid UserSearchRequest userSearchRequest) {
         Page<UserDTO> users = searchService.findBySearch(userSearchRequest);
         request.setAttribute(SEARCH,userSearchRequest);
         request.setAttribute("users", users);
@@ -70,7 +71,7 @@ public class ManagerController {
     }
 
     @GetMapping("/masters")
-    String mastersPage(HttpServletRequest request,@RequestObject MasterSearchRequest masterSearchRequest) {
+    String mastersPage(HttpServletRequest request,@RequestObject @Valid MasterSearchRequest masterSearchRequest) {
         Page<UserDTO> masters = searchService.findBySearch(masterSearchRequest);
        request.setAttribute(SEARCH,masterSearchRequest);
        request.setAttribute("masters", masters);

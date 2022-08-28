@@ -1,11 +1,15 @@
 package com.epam.finalproject.request.receipt.update;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class ReceiptItemUpdateRequest {
+    @NotNull
     Long repairWorkID;
-
+    @PositiveOrZero
     BigDecimal priceAmount;
 
     public ReceiptItemUpdateRequest(Long repairWorkID, BigDecimal priceAmount) {
@@ -46,12 +50,12 @@ public class ReceiptItemUpdateRequest {
         return this.repairWorkID;
     }
 
-    public BigDecimal getPriceAmount() {
-        return this.priceAmount;
-    }
-
     public void setRepairWorkID(Long repairWorkID) {
         this.repairWorkID = repairWorkID;
+    }
+
+    public BigDecimal getPriceAmount() {
+        return this.priceAmount;
     }
 
     public void setPriceAmount(BigDecimal priceAmount) {

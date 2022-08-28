@@ -1,15 +1,20 @@
 package com.epam.finalproject.request.receipt.create;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Objects;
 
 public class ReceiptDeliveryCreateRequest {
 
+    @NotBlank
     private String country;
 
     private String state;
 
+    @NotBlank
     private String city;
 
+    @NotBlank
     private String localAddress;
 
     private String postalCode;

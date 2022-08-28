@@ -1,5 +1,8 @@
 package com.epam.finalproject.request.search;
 
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -7,7 +10,9 @@ public class ReceiptWithMasterSearchRequest {
     String sort;
     Set<String> status;
     String customer;
+    @PositiveOrZero
     Integer page;
+    @Positive
     Integer count;
 
     public ReceiptWithMasterSearchRequest(String sort, Set<String> status, String customer, Integer page,

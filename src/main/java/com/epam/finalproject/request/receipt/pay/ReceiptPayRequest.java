@@ -1,6 +1,7 @@
 package com.epam.finalproject.request.receipt.pay;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ public class ReceiptPayRequest {
     @JsonIgnore
     Long id;
 
+    @NotNull
     Long walletId;
 
     public ReceiptPayRequest(Long id, Long walletId) {

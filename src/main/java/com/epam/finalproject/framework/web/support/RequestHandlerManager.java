@@ -13,6 +13,8 @@ import com.epam.finalproject.framework.web.servlet.View;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.executable.ExecutableValidator;
 import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,22 +28,28 @@ import java.util.stream.Collectors;
 public class RequestHandlerManager {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(RequestHandlerManager.class);
-    BeanFactory factory;
+    final BeanFactory factory;
 
-    List<BeanDefinition> controllerBeanDefinitions;
+    final List<BeanDefinition> controllerBeanDefinitions;
 
 
-    List<HandlerInterceptor> handlerInterceptors;
+    final List<HandlerInterceptor> handlerInterceptors;
 
-    RequestHandlerResolver resolver;
+    final RequestHandlerResolver resolver;
+
+    final ExecutableValidator executableValidator;
 
 
     @Autowire
-    public RequestHandlerManager(@BeanDefinitions @Controller List<BeanDefinition> controllerBeanDefinitions, BeanFactory factory, RequestHandlerResolver resolver,@Beans(HandlerInterceptor.class) List<HandlerInterceptor> handlerInterceptors) {
+    public RequestHandlerManager(@BeanDefinitions @Controller List<BeanDefinition> controllerBeanDefinitions,
+            BeanFactory factory, RequestHandlerResolver resolver,
+            @Beans(HandlerInterceptor.class) List<HandlerInterceptor> handlerInterceptors,
+            ExecutableValidator executableValidator) {
         this.factory = factory;
         this.resolver = resolver;
         this.controllerBeanDefinitions = controllerBeanDefinitions;
         this.handlerInterceptors = handlerInterceptors;
+        this.executableValidator = executableValidator;
     }
 
     public RequestHandlerManager addHandler(RequestHandler handler) {
@@ -56,8 +64,8 @@ public class RequestHandlerManager {
     public boolean preHandle(RequestHandler handler, WebHttpPair pair) throws Exception {
         log.trace("Call preHandle with handler {}", handler);
         boolean result = true;
-        for(HandlerInterceptor interceptor : handlerInterceptors){
-            if (!interceptor.preHandle(pair.getRequest(),pair.getResponse(),handler)){
+        for (HandlerInterceptor interceptor : handlerInterceptors) {
+            if (!interceptor.preHandle(pair.getRequest(), pair.getResponse(), handler)) {
                 result = false;
                 break;
             }
@@ -67,15 +75,15 @@ public class RequestHandlerManager {
 
     public void postHandle(RequestHandler handler, WebHttpPair pair, View view) throws Exception {
         log.trace("Call postHandle with handler {}", handler);
-        for(HandlerInterceptor interceptor : handlerInterceptors){
-            interceptor.postHandle(pair.getRequest(), pair.getResponse(), handler,view);
+        for (HandlerInterceptor interceptor : handlerInterceptors) {
+            interceptor.postHandle(pair.getRequest(), pair.getResponse(), handler, view);
         }
     }
 
     public void afterCompletion(RequestHandler handler, WebHttpPair pair, Exception e) throws Exception {
         log.trace("Call afterCompletion with handler {}", handler);
-        for(HandlerInterceptor interceptor : handlerInterceptors){
-            interceptor.afterCompletion(pair.getRequest(), pair.getResponse(), handler,e);
+        for (HandlerInterceptor interceptor : handlerInterceptors) {
+            interceptor.afterCompletion(pair.getRequest(), pair.getResponse(), handler, e);
         }
     }
 
@@ -84,6 +92,11 @@ public class RequestHandlerManager {
         log.trace("Call invoke with handler {} args {}", handler, args);
         Object controller = factory.getBean(handler.getControllerBeanName());
         log.trace("found controller {}", controller);
+        Set<ConstraintViolation<Object>> violations
+                = executableValidator.validateParameters(controller, handler.getTargetMethod(), args.toArray());
+        if (!violations.isEmpty()) {
+            throw new HandlerArgumentValidationException(String.format("Not valid %s",violations));
+        }
         try {
             Method method = handler.getTargetMethod();
             method.setAccessible(true);
@@ -92,8 +105,8 @@ public class RequestHandlerManager {
             return result;
         } catch (IllegalAccessException e) {
             throw new ServletException(e);
-        }catch (InvocationTargetException e){
-            if (e.getCause() instanceof Exception){
+        } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof Exception) {
                 throw (Exception) e.getCause();
             }
             throw new ServletException(e.getCause());
@@ -104,7 +117,8 @@ public class RequestHandlerManager {
     public void setup() {
         for (BeanDefinition beanDefinition : controllerBeanDefinitions) {
             List<Method> targetMethods = Arrays.stream(beanDefinition.getBeanClass().getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(RequestMapping.class) || method.isAnnotationPresent(GetMapping.class) || method.isAnnotationPresent(PostMapping.class))
+                    .filter(method -> method.isAnnotationPresent(RequestMapping.class) || method.isAnnotationPresent(
+                            GetMapping.class) || method.isAnnotationPresent(PostMapping.class))
                     .collect(Collectors.toList());
             List<RequestHandler> handlers = targetMethods.stream()
                     .map(method -> parse(method, beanDefinition))

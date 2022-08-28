@@ -1,6 +1,8 @@
 package com.epam.finalproject.request.search;
 
 import com.epam.finalproject.framework.web.resolver.annotation.CollectionType;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.Objects;
 import java.util.Set;
@@ -14,8 +16,10 @@ public class UserSearchRequest {
 
     String username;
 
+    @PositiveOrZero
     Integer page;
 
+    @Positive
     Integer count;
 
     public UserSearchRequest(String sort, Set<String> status, String username, Integer page, Integer count) {

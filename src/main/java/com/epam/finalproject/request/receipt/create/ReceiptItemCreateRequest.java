@@ -1,8 +1,11 @@
 package com.epam.finalproject.request.receipt.create;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Objects;
 
 public class ReceiptItemCreateRequest {
+    @NotNull
     Long repairWorkID;
 
     public ReceiptItemCreateRequest(Long repairWorkID) {

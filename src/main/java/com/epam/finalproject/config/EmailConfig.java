@@ -15,7 +15,7 @@ public class EmailConfig {
 
     @Bean
     Properties mailProperties() throws IOException {
-        try (InputStream input = EmailConfig.class.getClassLoader().getResourceAsStream("application.properties")) {
+        try (InputStream input = EmailConfig.class.getClassLoader().getResourceAsStream("application.properties.sample")) {
             Properties properties = new Properties();
             properties.load(input);
             return properties;

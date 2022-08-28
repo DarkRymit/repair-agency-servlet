@@ -1,13 +1,17 @@
 package com.epam.finalproject.request;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Objects;
 
 public class ReceiptResponseCreateRequest {
 
     private Long receiptId;
 
+    @NotNull
     private String text;
 
+    @NotNull
     private Integer rating;
 
     public ReceiptResponseCreateRequest(Long receiptId, String text, Integer rating) {

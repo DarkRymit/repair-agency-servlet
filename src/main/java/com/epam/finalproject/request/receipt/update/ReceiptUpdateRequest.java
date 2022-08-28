@@ -2,6 +2,9 @@ package com.epam.finalproject.request.receipt.update;
 
 import com.epam.finalproject.model.entity.enums.ReceiptStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 import java.util.Set;
@@ -11,16 +14,21 @@ public class ReceiptUpdateRequest {
     @JsonIgnore
     Long id;
 
+    @NotNull
     ReceiptStatusEnum receiptStatus;
 
     String masterUsername;
 
+    @Valid
     Set<ReceiptItemUpdateRequest> receiptItems;
 
+    @Valid
     ReceiptDeliveryUpdateRequest receiptDelivery;
 
+    @NotBlank
     String priceCurrency;
 
+    @NotNull
     String note;
 
     public ReceiptUpdateRequest(Long id, ReceiptStatusEnum receiptStatus, String masterUsername,

@@ -1,11 +1,16 @@
 package com.epam.finalproject.request.search;
 
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+
 import java.util.Objects;
 
 public class MasterSearchRequest {
     String sort;
     String username;
+    @PositiveOrZero
     Integer page;
+    @Positive
     Integer count;
 
     public MasterSearchRequest(String sort, String username, Integer page, Integer count) {

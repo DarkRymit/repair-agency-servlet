@@ -1,13 +1,18 @@
 package com.epam.finalproject.request;
 
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class AddMoneyRequest {
 
+    @NotNull
     private Long id;
 
+    @Positive
     private BigDecimal moneyToAdd;
 
     public AddMoneyRequest() {

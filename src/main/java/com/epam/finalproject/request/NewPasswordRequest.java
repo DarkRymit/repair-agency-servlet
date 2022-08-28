@@ -1,8 +1,14 @@
 package com.epam.finalproject.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.Objects;
 
 public class NewPasswordRequest {
+
+    @NotBlank
+    @Size(min = 8,max = 14)
     String password;
 
     public NewPasswordRequest(String password) {

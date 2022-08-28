@@ -1,6 +1,8 @@
 package com.epam.finalproject.request.search;
 
 import com.epam.finalproject.framework.web.resolver.annotation.CollectionType;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.Objects;
 import java.util.Set;
@@ -13,9 +15,9 @@ public class ReceiptWithCustomerSearchRequest {
     Set<String> status;
 
     String master;
-
+    @PositiveOrZero
     Integer page;
-
+    @Positive
     Integer count;
 
     public ReceiptWithCustomerSearchRequest(String sort, Set<String> status, String master, Integer page,
