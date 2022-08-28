@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Sign In</title>
+    <title><fmt:message key="signIn"/></title>
 
     <ext:fragment name="import/bootstrap"/>
     <ext:fragment name="import/animation"/>
@@ -29,11 +29,11 @@
                             <div class="col-lg-12">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 mb-4">Welcome Back!</h1>
+                                        <h1 class="h4 mb-4"><fmt:message key="signIn"/></h1>
                                     </div>
                                     <c:if test="${requestScope.error}">
                                         <div class="alert alert-danger fadeIn" id="myAlert" role="alert">
-                                            Username or Password not match
+                                            <fmt:message key="signIn.error"/>
                                         </div>
                                     </c:if>
                                     <script>
@@ -51,22 +51,22 @@
                                             <div class="form-floating mb-2">
                                                 <input type="text" id="username" name="username"
                                                        class="form-control mb-2" required placeholder="Username">
-                                                <label for="username">Username</label>
+                                                <label for="username"><fmt:message key="signIn.username"/></label>
                                             </div>
                                             <div class="form-floating mb-2">
                                                 <input type="password" id="password" name="password"
                                                        class="form-control" required placeholder="Password">
-                                                <label for="password">Password</label>
+                                                <label for="password"><fmt:message key="signIn.password"/></label>
                                             </div>
                                         </div>
-                                        <input type="submit" class="btn btn-primary btn-user btn-block" value="Sign In">
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" value=<fmt:message key="signIn"/>>
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" <ext:href path="/auth/signup"/> Forgot Password?</a>
+                                        <a class="small" <ext:href path="/auth/resetpassword"/> ><fmt:message key="password.reset.title"/></a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" <ext:href path="/auth/signup"/> >Create an Account!</a>
+                                        <a class="small" <ext:href path="/auth/signup"/> ><fmt:message key="create"/></a>
                                     </div>
                                 </div>
                             </div>

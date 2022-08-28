@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Error 403</title>
+    <title>Error 400</title>
     <ext:fragment name="import/bootstrap"/>
     <ext:fragment name="import/errorNoise"/>
     <ext:fragment name="import/animation"/>
@@ -26,8 +26,8 @@
                     <div class="card-body p-0">
                         <div class="row">
                             <div class="col-lg-12 p-5 text-center">
-                                <div class="mx-auto error" >403</div>
-                                <p class="lead mb-5" >${http:statusText(403)}</p>
+                                <div class="mx-auto error" >400</div>
+                                <p class="lead mb-5" >${http:statusText(400)}</p>
                                 <a <ext:href path="/"/> > Home</a>
                             </div>
                         </div>

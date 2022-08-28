@@ -6,90 +6,40 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-            <a aria-current="page" class="nav-link text-white ${active.equals('home')? 'active' : '' }"
-            <ext:href path="/home"/>
-            <svg class="bi me-2" height="16" width="16">
-                <use xlink:href="#home"/>
-            </svg>
-            Home
-            </a>
-        </li>
-        <li class="nav-item">
-            <button aria-expanded="false"
-                    class="nav-link text-white align-items-center rounded collapsed ${active.equals('orders')? 'active' : '' }"
-                    data-bs-target="#orders-collapse"
-                    data-bs-toggle="collapse">
+            <a aria-current="page" class="nav-link text-white ${active.equals('orders')? 'active' : '' }"
+                <ext:href path="/manager/orders"/> >
                 <svg class="bi me-2" height="16" width="16">
                     <use xlink:href="#table"/>
                 </svg>
-                Orders
-            </button>
-            <div class="collapse" id="orders-collapse">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a class="link-light rounded" href="orders">Overview</a></li>
-                    <li><a class="link-light rounded" href="#">New</a></li>
-                    <li><a class="link-light rounded" href="#">Wait for payment</a></li>
-                    <li><a class="link-light rounded" href="#">Payment completed</a></li>
-                    <li><a class="link-light rounded" href="#">Completed</a></li>
-                    <li><a class="link-light rounded" href="#">Canceled</a></li>
-                </ul>
-            </div>
+                <fmt:message key="side.orders"/>
+            </a>
         </li>
-        <li>
-            <button aria-expanded="false"
-                    class="nav-link text-white align-items-center rounded collapsed  ${active.equals('users')? 'active' : '' }"
-                    data-bs-target="#users-collapse"
-                    data-bs-toggle="collapse">
+        <li class="nav-item">
+            <a aria-current="page" class="nav-link text-white ${active.equals('users')? 'active' : '' }"
+                <ext:href path="/manager/users"/> >
                 <svg class="bi me-2" height="16" width="16">
                     <use xlink:href="#people-circle"/>
                 </svg>
-                Users
-            </button>
-            <div class="collapse" id="users-collapse">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a class="link-light rounded" href="users">Overview</a></li>
-                    <li><a class="link-light rounded" href="#">Unverified</a></li>
-                    <li><a class="link-light rounded" href="#">Blocked</a></li>
-                </ul>
-            </div>
-
+                <fmt:message key="side.users"/>
+            </a>
         </li>
-        <li>
-            <button aria-expanded="false"
-                    class="nav-link text-white align-items-center rounded collapsed ${active.equals('masters')? 'active' : '' }"
-                    data-bs-target="#masters-collapse"
-                    data-bs-toggle="collapse">
+        <li class="nav-item">
+            <a aria-current="page" class="nav-link text-white ${active.equals('masters')? 'active' : '' }"
+                <ext:href path="/manager/masters"/> >
                 <svg class="bi me-2" height="16" width="16">
                     <use xlink:href="#grid"/>
                 </svg>
-                Masters
-            </button>
-            <div class="collapse" id="masters-collapse">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a class="link-light rounded" href="masters">Overview</a></li>
-                    <li><a class="link-light rounded" href="#">Unverified</a></li>
-                    <li><a class="link-light rounded" href="#">Blocked</a></li>
-                </ul>
-            </div>
-
+                <fmt:message key="side.masters"/>
+            </a>
         </li>
-        <li>
-            <button aria-expanded="false"
-                    class="nav-link text-white align-items-center rounded collapsed ${active.equals('responses')? 'active' : '' }"
-                    data-bs-target="#responses-collapse"
-                    data-bs-toggle="collapse">
-                <svg class="bi me-2" height="16" width="16">
-                    <use xlink:href="#people-circle"/>
-                </svg>
-                Responses
-            </button>
-            <div class="collapse" id="responses-collapse">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a class="link-light rounded" href="responses">Overview</a></li>
-                    <li><a class="link-light rounded" href="#">Unverified</a></li>
-                    <li><a class="link-light rounded" href="#">Verified</a></li>
-                </ul>
-            </div>
+        <li class="nav-item">
+            <a aria-current="page" class="nav-link text-white ${active.equals('responses')? 'active' : '' }"
+            <ext:href path="/manager/responses"/> >
+            <svg class="bi me-2" height="16" width="16">
+                <use xlink:href="#people-circle"/>
+            </svg>
+            <fmt:message key="side.responses"/>
+            </a>
         </li>
     </ul>
 </div>

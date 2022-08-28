@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Password reset</title>
+    <title><fmt:message key="password.reset.title"/></title>
 
     <!-- CSS only -->
     <ext:fragment name="import/bootstrap"/>
@@ -30,11 +30,11 @@
                             <div class="col-lg-12">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 mb-4">Welcome Back!</h1>
+                                        <h1 class="h4 mb-4"><fmt:message key="password.reset.title"/></h1>
                                     </div>
                                     <c:if test="${requestScope.error}">
                                         <div class="alert alert-danger fadeIn" id="myAlert" role="alert">
-                                            Email not find
+                                            <fmt:message key="password.reset.email.notFind"/>
                                         </div>
                                     </c:if>
                                     <script>
@@ -52,17 +52,17 @@
                                             <div class="form-floating mb-2">
                                                 <input type="text" id="email" name="email"
                                                        class="form-control mb-2" required placeholder="Email">
-                                                <label for="email">Email</label>
+                                                <label for="email"> <fmt:message key="password.reset.email.title"/></label>
                                             </div>
                                         </div>
-                                        <input type="submit" class="btn btn-primary btn-user btn-block" value="Confirm">
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" value=<fmt:message key="password.reset.confirm.button"/>>
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small"  <ext:href path="/auth/signin"/> >Sign in</a>
+                                        <a class="small"  <ext:href path="/auth/signin"/> ><fmt:message key="signIn"/></a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small"  <ext:href path="/auth/signup"/> >Create an Account!</a>
+                                        <a class="small"  <ext:href path="/auth/signup"/> ><fmt:message key="create"/></a>
                                     </div>
                                 </div>
                             </div>

@@ -13,7 +13,7 @@
                     <div class="col-6">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Wallet</h5>
+                                <h5 class="card-title"><fmt:message key="wallet.name"/></h5>
                                 <h6 class="card-subtitle">${wallet.name}</h6>
                                 <i class="card-text">${wallet.moneyAmount}</i>
                                 <i class="card-text">${wallet.moneyCurrency.code}</i>

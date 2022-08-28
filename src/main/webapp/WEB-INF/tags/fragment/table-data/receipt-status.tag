@@ -4,22 +4,22 @@
 <td>
     <c:choose>
         <c:when test="${receipt.status.name.equals('CREATED')}">
-            <span>Created</span>
+            <span> <fmt:message key="status.created"/></span>
         </c:when>
         <c:when test="${receipt.status.name.equals('WAIT_FOR_PAYMENT')}">
-            <span>Wait for payment</span>
+            <span> <fmt:message key="status.waitForPayment"/></span>
         </c:when>
         <c:when test="${receipt.status.name.equals('PAID')}">
-            <span>Paid</span>
+            <span> <fmt:message key="status.paid"/></span>
         </c:when>
         <c:when test="${receipt.status.name.equals('IN_WORK')}">
-            <span>In work</span>
+            <span> <fmt:message key="status.inWork"/></span>
         </c:when>
         <c:when test="${receipt.status.name.equals('DONE')}">
-            <span>Done</span>
+            <span> <fmt:message key="status.done"/></span>
         </c:when>
         <c:when test="${receipt.status.name.equals('CANCELED')}">
-            <span>Canceled</span>
+            <span> <fmt:message key="status.canceled"/></span>
         </c:when>
     </c:choose>
 </td>

@@ -4,17 +4,17 @@
 <%@ attribute name="flows" required="true" type="java.util.List<com.epam.finalproject.dto.ReceiptStatusFlowDTO>" %>
 <td>
     <a class="btn btn-outline-primary" role="button" <ext:href path="/order/${receipt.id.toString()}"/> >
-        View
+        <fmt:message key="order.action.view"/>
     </a>
     <sec:authorize expr="hasRole('MANAGER')">
         <a class="btn btn-outline-primary" role="button" <ext:href path="/order/${receipt.id.toString()}/update"/> >
-            Update
+            <fmt:message key="order.action.update"/>
         </a>
     </sec:authorize>
     <c:if test="${receipt.status.name.equals('WAIT_FOR_PAYMENT')}">
         <sec:authorize expr="hasRole('CUSTOMER')">
             <a class="btn btn-outline-primary" role="button" <ext:href path="/order/${receipt.id.toString()}/pay"/> >
-                Pay
+                <fmt:message key="order.action.pay"/>
             </a>
         </sec:authorize>
     </c:if>
@@ -22,7 +22,7 @@
         <a aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
            id="dropdownMenuLink"
            role="button">
-            Status
+            <fmt:message key="order.action.status"/>
         </a>
         <ul aria-labelledby="dropdownMenuLink" class="dropdown-menu">
             <c:forEach items="${flows}" var="flow">

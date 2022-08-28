@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Sign In</title>
+    <title><fmt:message key="password.reset.title"/></title>
 
     <!-- CSS only -->
     <ext:fragment name="import/bootstrap"/>
@@ -30,11 +30,11 @@
                             <div class="col-lg-12">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 mb-4">Enter new password</h1>
+                                        <h1 class="h4 mb-4"><fmt:message key="password.reset.newPassword"/></h1>
                                     </div>
                                     <c:if test="${requestScope.error}">
                                         <div class="alert alert-danger fadeIn" id="myAlert" role="alert">
-                                            Token not valid
+                                            <fmt:message key="password.reset.token.invalid"/>
                                         </div>
                                     </c:if>
                                     <script>
@@ -46,16 +46,17 @@
                                         });
                                     </script>
 
-                                    <form method="post" <ext:action path=""/>
+                                    <jsp:useBean id="token" scope="request" type="java.lang.String"/>
+                                    <form method="post" <ext:action path="/auth/resetpassword/confirm/${token}"/>
                                           class="user text-center">
                                         <div class="form-group">
                                             <div class="form-floating mb-2">
                                                 <input type="text" id="password" name="password"
                                                        class="form-control mb-2" required placeholder="Password">
-                                                <label for="password">Password</label>
+                                                <label for="password"><fmt:message key="password.reset.newPassword.title"/></label>
                                             </div>
                                         </div>
-                                        <input type="submit" class="btn btn-primary btn-user btn-block" value="Confirm">
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" value=<fmt:message key="password.reset.confirm.button"/>>
                                     </form>
                                 </div>
                             </div>

@@ -7,43 +7,33 @@
                 <ul class="list-group text-center">
                     <li class="list-group-item">
                         <input class="btn btn-primary btn-user btn-block search-submit" type="submit"
-                               value="Apply">
+                               value=<fmt:message key="search.apply"/>>
                     </li>
                     <li class="list-group-item">
-                        <label for="sort_select"> Sort by </label>
+                        <label for="sort_select"> <fmt:message key="sort.by"/> </label>
                         <select class="form-select" id="sort_select" name="sort">
                             <option <ext:selected test="${search.sort=='create-time'&& search.sort==''}"/>
                                     value="create-time">
-                                creation time
+                                <fmt:message key="sort.by.createTime"/>
                             </option>
-                            <option <ext:selected test="${search.sort=='status'}"/> value="status">status</option>
-                            <option <ext:selected test="${search.sort=='price'}"/> value="price">price</option>
+                            <option <ext:selected test="${search.sort=='status'}"/> value="status"><fmt:message key="sort.by.status"/></option>
+                            <option <ext:selected test="${search.sort=='price'}"/> value="price"><fmt:message key="sort.by.price"/></option>
                         </select>
                     </li>
 
                     <li class="list-group-item list-group-item-secondary">
-                        Filter by
+                        <fmt:message key="filter.by"/>
                     </li>
 
                     <li class="list-group-item">
                         <button class="btn btn-primary" data-bs-target="#collapseStatus"
                                 data-bs-toggle="collapse"
                                 type="button">
-                            Status
+                            <fmt:message key="search.by.status"/>
                         </button>
                         <div class="collapse px-auto ${(search.status!= null && !search.status.isEmpty())? 'show' : ''} "
                              id="collapseStatus">
                             <div class="list-group">
-                                <div class="form-check list-group-item list-group-item-action">
-                                    <input class="form-check-input" id="flexCheckCreated"
-                                           name="status"
-                                    <ext:checked test="${search.status.contains('created')}"/>
-                                           type="checkbox"
-                                           value="created">
-                                    <label class="form-check-label" for="flexCheckCreated">
-                                        Created
-                                    </label>
-                                </div>
                                 <div class="form-check list-group-item list-group-item-action">
                                     <input class="form-check-input" id="flexCheckWaitForPayment"
                                            name="status"
@@ -51,7 +41,17 @@
                                            type="checkbox"
                                            value="wait">
                                     <label class="form-check-label" for="flexCheckWaitForPayment">
-                                        Wait for payment
+                                        <fmt:message key="status.waitForPayment"/>
+                                    </label>
+                                </div>
+                                <div class="form-check list-group-item list-group-item-action">
+                                    <input class="form-check-input" id="flexCheckCreated"
+                                           name="status"
+                                    <ext:checked test="${search.status.contains('created')}"/>
+                                           type="checkbox"
+                                           value="wait">
+                                    <label class="form-check-label" for="flexCheckCreated">
+                                        <fmt:message key="status.created"/>
                                     </label>
                                 </div>
                                 <div class="form-check list-group-item list-group-item-action">
@@ -60,7 +60,7 @@
                                            type="checkbox"
                                            value="paid">
                                     <label class="form-check-label" for="flexCheckPaid">
-                                        Paid
+                                        <fmt:message key="status.paid"/>
                                     </label>
                                 </div>
                                 <div class="form-check list-group-item list-group-item-action">
@@ -69,7 +69,7 @@
                                            type="checkbox"
                                            value="work">
                                     <label class="form-check-label" for="flexCheckInWork">
-                                        In work
+                                        <fmt:message key="status.inWork"/>
                                     </label>
                                 </div>
                                 <div class="form-check list-group-item list-group-item-action">
@@ -78,7 +78,7 @@
                                            type="checkbox"
                                            value="done">
                                     <label class="form-check-label" for="flexCheckDone">
-                                        Done
+                                        <fmt:message key="status.done"/>
                                     </label>
                                 </div>
                                 <div class="form-check list-group-item list-group-item-action">
@@ -87,7 +87,7 @@
                                            type="checkbox"
                                            value="cancel">
                                     <label class="form-check-label" for="flexCheckCanceled">
-                                        Canceled
+                                        <fmt:message key="status.canceled"/>
                                     </label>
                                 </div>
                             </div>
@@ -97,13 +97,13 @@
                         <button class="btn btn-primary" data-bs-target="#collapseCustomer"
                                 data-bs-toggle="collapse"
                                 type="button">
-                            Customer
+                            <fmt:message key="search.by.customer"/>
                         </button>
                         <div class="collapse px-auto ${(search.customer!= null && !search.customer.isBlank())?'show' : ''}" id="collapseCustomer">
                             <div class="list-group">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" id="basic-addon2">@</span>
-                                    <input class="form-control" name="customer" placeholder="Username"
+                                    <input class="form-control" name="customer" placeholder=<fmt:message key="user.username"/>
                                            value="${search.customer}"
                                            type="text">
                                 </div>
@@ -117,14 +117,14 @@
             <table class="table table-bordered border-primary">
                 <thead class="table-dark align-middle">
                 <tr class="head" id="receiptHead">
-                    <th scope="col">ID</th>
-                    <th scope="col">User</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Creation time</th>
-                    <th scope="col">Delivery</th>
-                    <th scope="col">Action</th>
+                    <th scope="col"><fmt:message key="order.id.name"/></th>
+                    <th scope="col"><fmt:message key="order.user.name"/></th>
+                    <th scope="col"><fmt:message key="order.status.name"/></th>
+                    <th scope="col"><fmt:message key="order.category.name"/></th>
+                    <th scope="col"><fmt:message key="order.totalPrice.name"/></th>
+                    <th scope="col"><fmt:message key="order.creationDate.name"/></th>
+                    <th scope="col"><fmt:message key="order.delivery.title"/></th>
+                    <th scope="col"><fmt:message key="order.action"/></th>
                 </tr>
                 </thead>
                 <tbody class="table-group-divider">

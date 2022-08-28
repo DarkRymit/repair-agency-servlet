@@ -1,22 +1,30 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ attribute name="var" required="true" type="java.lang.String" %>
+
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="locale" value="${sessionScope.get('SessionLocaleResolver.LOCALE')}" />
+
+<fmt:setLocale value="${locale.language}"/>
+
+<fmt:setBundle basename="messages" />
+
 <c:choose>
     <c:when test="${var.equals('CREATED')}">
-        <strong>Created</strong>
+        <strong><fmt:message key="status.created"/></strong>
     </c:when>
     <c:when test="${var.equals('WAIT_FOR_PAYMENT')}">
-        <strong>Wait for payment</strong>
+        <strong><fmt:message key="status.waitForPayment"/></strong>
     </c:when>
     <c:when test="${var.equals('PAID')}">
-        <strong>Paid</strong>
+        <strong><fmt:message key="status.paid"/></strong>
     </c:when>
     <c:when test="${var.equals('IN_WORK')}">
-        <strong>In work</strong>
+        <strong><fmt:message key="status.inWork"/></strong>
     </c:when>
     <c:when test="${var.equals('DONE')}">
-        <strong>Done</strong>
+        <strong><fmt:message key="status.done"/></strong>
     </c:when>
     <c:when test="${var.equals('CANCELED')}">
-        <strong>Canceled</strong>
+        <strong><fmt:message key="status.canceled"/></strong>
     </c:when>
 </c:choose>

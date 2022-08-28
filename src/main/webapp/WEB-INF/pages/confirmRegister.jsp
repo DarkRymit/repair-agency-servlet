@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Sign In</title>
+    <title><fmt:message key="register.confirm"/></title>
 
     <ext:fragment name="import/bootstrap"/>
     <ext:fragment name="import/animation"/>
@@ -29,10 +29,10 @@
                             <div class="col-lg-12">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 mb-4">Confirm Register</h1>
+                                        <h1 class="h4 mb-4"><fmt:message key="register.confirm"/></h1>
                                     </div>
                                     <hr>
-                                        <h1 class="h4 mb-4">Check Email</h1>
+                                        <h1 class="h4 mb-4"><fmt:message key="register.confirm.checkMail"/></h1>
                                     <hr>
                                 </div>
                             </div>

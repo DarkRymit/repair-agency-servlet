@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Password reset</title>
+    <title><fmt:message key="password.reset.title"/></title>
 
     <!-- CSS only -->
     <ext:fragment name="import/bootstrap"/>
@@ -30,10 +30,10 @@
                             <div class="col-lg-12">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 mb-4">Confirm Reset</h1>
+                                        <h1 class="h4 mb-4"><fmt:message key="password.reset.confirm"/></h1>
                                     </div>
                                     <hr>
-                                    <h1 class="h4 mb-4">Check Email</h1>
+                                    <h1 class="h4 mb-4"><fmt:message key="password.reset.checkEmail"/></h1>
                                     <hr>
                                 </div>
                             </div>

@@ -4,7 +4,7 @@
 <td>
     <c:if test="${receipt.master == null}">
         <i class=" text-dark text-decoration-none">
-            Not assigned
+            <fmt:message key="order.master.notAssigned"/>
         </i>
     </c:if>
     <c:if test="${receipt.master != null}">

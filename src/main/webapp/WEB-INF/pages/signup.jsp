@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Sign Up</title>
+    <title><fmt:message key="create"/></title>
 
 
     <!-- CSS only -->
@@ -29,18 +29,18 @@
                     <div class="col-lg-12">
                         <div class="p-5">
                             <div class="text-center">
-                                <h1 class="h4 mb-4">Create an Account!</h1>
+                                <h1 class="h4 mb-4"><fmt:message key="create"/></h1>
                             </div>
                             <form name="signup" method="post" <ext:action path="/auth/signup"/>
                                   class="user text-center">
                                 <div class="form-floating mb-2">
                                     <input type="text" id="username" name="username"
                                            class="form-control form-control-user mb-2" required placeholder="Username">
-                                    <label for="username">Username</label>
+                                    <label for="username"><fmt:message key="user.username"/></label>
                                 </div>
                                 <c:if test="${requestScope.usernameError}">
                                     <div class="alert alert-danger fadeIn" id="usernameError" role="alert">
-                                        Username already registered
+                                        <fmt:message key="create.error.username"/>
                                     </div>
                                 </c:if>
                                 <script>
@@ -55,22 +55,22 @@
                                     <div class="form-floating">
                                         <input type="text"  id="firstName" name="firstName"
                                                class="form-control form-control-user" required placeholder="First Name">
-                                        <label for="firstName">First Name</label>
+                                        <label for="firstName"><fmt:message key="user.firstName"/></label>
                                     </div>
                                     <div class="form-floating">
                                         <input type="text"  id="lastName" name="lastName"
                                                class="form-control form-control-user" required placeholder="Last Name">
-                                        <label for="lastName">Last Name</label>
+                                        <label for="lastName"><fmt:message key="user.lastName"/></label>
                                     </div>
                                 </div>
                                 <div class="form-floating  mb-2">
                                     <input type="email"  id="email" name="email"
                                            class="form-control form-control-user mb-2" required placeholder="Email">
-                                    <label for="email">Email</label>
+                                    <label for="email"><fmt:message key="user.email"/></label>
                                 </div>
                                 <c:if test="${requestScope.emailError}">
                                     <div class="alert alert-danger fadeIn" id="emailAlert" role="alert">
-                                        Email already registered
+                                        <fmt:message key="create.error.email"/>
                                     </div>
                                 </c:if>
                                 <script>
@@ -84,23 +84,23 @@
                                 <div class="form-floating mb-2">
                                     <input type="tel"  id="phone" name="phone"
                                            class="form-control form-control-user mb-2" required placeholder="Phone">
-                                    <label for="phone">Phone</label>
+                                    <label for="phone"><fmt:message key="user.phone"/></label>
                                 </div>
                                 <div class="form-floating  mb-2">
                                     <div class="form-floating">
                                         <input type="password"  id="password" name="password"
                                                class="form-control form-control-user" required placeholder="Password">
-                                        <label for="password">Password</label>
+                                        <label for="password"><fmt:message key="user.password"/></label>
                                     </div>
                                 </div>
-                                <input type="submit" class="btn btn-primary btn-user btn-block" value="Sign Up">
+                                <input type="submit" class="btn btn-primary btn-user btn-block" value=<fmt:message key="create"/>>
                             </form>
                             <hr>
                             <div class="text-center">
-                                <a class="small" <ext:href path ="/auth/resetpassword"/> >Forgot Password?</a>
+                                <a class="small" <ext:href path ="/auth/resetpassword"/> ><fmt:message key="password.reset.title"/></a>
                             </div>
                             <div class="text-center">
-                                <a class="small" <ext:href path="/auth/signin"/> >Already have an account?</a>
+                                <a class="small" <ext:href path="/auth/signin"/> ><fmt:message key="signIn"/></a>
                             </div>
                         </div>
                     </div>

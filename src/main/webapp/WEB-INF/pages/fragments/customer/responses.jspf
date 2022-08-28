@@ -5,11 +5,11 @@
             <table class="table table-bordered border-primary">
                 <thead class="table-dark align-middle">
                 <tr class="head" id="receiptHead1">
-                    <th scope="col">ID</th>
-                    <th scope="col">Master</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Rate</th>
+                    <th scope="col"><fmt:message key="order.id.name"/></th>
+                    <th scope="col"><fmt:message key="order.master.name"/></th>
+                    <th scope="col"><fmt:message key="order.category.name"/></th>
+                    <th scope="col"><fmt:message key="order.totalPrice.name"/></th>
+                    <th scope="col"><fmt:message key="order.response.rating.name"/></th>
                 </tr>
                 </thead>
                 <tbody class="table-group-divider">

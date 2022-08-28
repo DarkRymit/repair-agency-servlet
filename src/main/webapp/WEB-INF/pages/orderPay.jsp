@@ -12,7 +12,7 @@
     <meta content="" name="description">
     <meta content="" name="author">
 
-    <title>Receipt</title>
+    <title><fmt:message key="order.title"/></title>
     <ext:fragment name="import/bootstrap"/>
     <ext:fragment name="import/font-awesome"/>
     <ext:fragment name="import/animation"/>
@@ -30,12 +30,12 @@
                                 <strong> Order </strong>
                                 <ul class="list-group">
                                     <li class="list-group-item">
-                                        <strong>ID</strong>
+                                        <strong><fmt:message key="order.id.name"/></strong>
                                         <span>:</span>
                                         <strong> ${order.id} </strong>
                                     </li>
                                     <li class="list-group-item">
-                                        <strong>Customer</strong>
+                                        <strong><fmt:message key="order.user.name"/></strong>
                                         <span>:</span>
                                         <a class=" text-dark text-decoration-none"
                                         <ext:action path="/user/${order.user.id.toString()}/profile"/> >
@@ -43,18 +43,18 @@
                                         </a>
                                     </li>
                                     <li class="list-group-item">
-                                        <strong>Category</strong>
+                                        <strong><fmt:message key="order.category.name"/></strong>
                                         <span>:</span>
                                             ${order.category.name}
                                     </li>
                                     <li class="list-group-item">
-                                        <strong>Total price</strong>
+                                        <strong><fmt:message key="order.totalPrice.name"/></strong>
                                         <span>:</span>
                                         <fmt:formatNumber value="${order.totalPrice}" minFractionDigits="0"/>
                                         <strong>${order.priceCurrency.code}</strong>
                                     </li>
                                 </ul>
-                                <strong> Pick a wallet </strong>
+                                <strong> <fmt:message key="order.pay.pickWallet"/> </strong>
                                 <form id="form" method="post"
                                         <ext:action path="/order/${order.id.toString()}/pay"/> >
                                     <ul class="list-group">
@@ -72,7 +72,7 @@
                                             </select>
                                         </li>
                                     </ul>
-                                    <button class="btn btn-primary" id="submit" type="submit">Pay</button>
+                                    <button class="btn btn-primary" id="submit" type="submit"><fmt:message key="order.pay.button"/></button>
                                 </form>
                             </div>
                         </div>

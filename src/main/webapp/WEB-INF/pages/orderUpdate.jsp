@@ -104,7 +104,7 @@
                                                     <div class="input-group mb-3">
                                                         <input class="form-control price"
                                                                placeholder="${item.priceAmount}"
-                                                               value="<fmt:formatNumber value="${item.priceAmount}" minFractionDigits="0"/>"
+                                                               value="${item.priceAmount}"
                                                                type="number">
                                                         <span class="input-group-text" id="basic-addon2"><strong>
                                                                 ${order.priceCurrency.code}
