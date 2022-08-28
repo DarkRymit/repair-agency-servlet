@@ -102,19 +102,23 @@ public class AuthController {
 
     @PostMapping("/signin")
     @PreAuthorize("isAnonymous()")
-    public String signIn(HttpServletRequest request, HttpServletResponse response,@RequestParam("username") String username,@RequestParam("password") String password){
+    public String signIn(HttpServletRequest request, HttpServletResponse response,@RequestParam("username") String username,@RequestParam("password") String password, RedirectAttributes redirectedAttributes){
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        if (!passwordEncoder.matches(password, userDetails.getPassword())){
-            throw new AuthenticationException("Password not match");
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (!passwordEncoder.matches(password, userDetails.getPassword())){
+                throw new AuthenticationException("Password not match");
+            }
+            if (!userDetails.isEnabled()){
+                throw new AuthenticationException("Not enabled");
+            }
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails,userDetails.getAuthorities());
+
+            securityContextRepository.saveContext(new SecurityContext(token),new WebHttpPair(request,response));
+        }catch (AuthenticationException e){
+            redirectedAttributes.addFlashAttribute("error", "true");
+            return "redirect:/auth/signin";
         }
-        if (!userDetails.isEnabled()){
-            throw new AuthenticationException("Not enabled");
-        }
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails,userDetails.getAuthorities());
-
-        securityContextRepository.saveContext(new SecurityContext(token),new WebHttpPair(request,response));
-
         return "redirect:/";
     }
 

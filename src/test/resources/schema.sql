@@ -45,7 +45,7 @@ CREATE TABLE users
     last_modified_by   varchar(255) DEFAULT NULL,
     last_modified_date datetime(6)  DEFAULT NULL,
     last_name          varchar(255) DEFAULT NULL,
-    `password`         varchar(60)  NOT NULL,
+    `password`         varchar(255)  NOT NULL,
     phone              varchar(255) NOT NULL,
     username           varchar(255) NOT NULL,
     PRIMARY KEY (id),
