@@ -18,7 +18,7 @@ import static com.epam.finalproject.repository.impl.SqlAliasConstants.USER_ALIAS
 @Component
 public class PasswordResetTokenRepositorySQL extends SqlAnnotationDrivenRepository<PasswordResetToken> implements PasswordResetTokenRepository {
 
-    public static final String SELECT_EAGER_FORMAT = "SELECT %s FROM verification_tokens as t " +
+    public static final String SELECT_EAGER_FORMAT = "SELECT %s FROM password_reset_tokens as t " +
             "left join users as u on t.user_id = u.id ";
     public static final String SELECT_EAGER = String.format(SELECT_EAGER_FORMAT,
             " t.id as t_id , t.expiry_date as t_expiry_date , t.token as t_token , t.user_id as t_user_id " + ","
