@@ -3,6 +3,7 @@ package com.epam.finalproject.controller;
 import com.epam.finalproject.currency.context.CurrencyUnitContextHolder;
 import com.epam.finalproject.dto.*;
 import com.epam.finalproject.framework.security.UserDetails;
+import com.epam.finalproject.framework.security.annotation.PostAuthorize;
 import com.epam.finalproject.framework.security.annotation.PreAuthorize;
 import com.epam.finalproject.framework.web.annotation.*;
 import com.epam.finalproject.model.entity.AppCurrency;
@@ -50,81 +51,91 @@ public class ReceiptController {
     @PreAuthorize("hasRole('MANAGER') || hasRole('ADMIN')")
     String updatePage(HttpServletRequest request, UserDetails userDetails, @PathVariable("id") Long id) {
         ReceiptDTO receipt = receiptService.findById(id);
-        List<ReceiptStatusFlowDTO> flows = receiptStatusFlowService.listAllAvailableForUser(receipt.getStatus().getId(),userDetails.getUsername());
+        List<ReceiptStatusFlowDTO> flows = receiptStatusFlowService.listAllAvailableForUser(receipt.getStatus().getId(),
+                userDetails.getUsername());
         List<AppCurrency> currencies = appCurrencyService.findAll();
-        request.setAttribute("order",receipt);
-        request.setAttribute("flows",flows);
-        request.setAttribute("currencies",currencies);
+        request.setAttribute("order", receipt);
+        request.setAttribute("flows", flows);
+        request.setAttribute("currencies", currencies);
         return "orderUpdate";
     }
+
     @PostMapping("/{id}/update")
     @PreAuthorize("hasRole('MANAGER') || hasRole('ADMIN')")
     String update(@RequestJsonObject @Valid ReceiptUpdateRequest updateRequest, @PathVariable("id") Long id) {
         updateRequest.setId(id);
         ReceiptDTO receipt = receiptService.update(updateRequest);
-        return "redirect:/order/"+receipt.getId();
+        return "redirect:/order/" + receipt.getId();
     }
 
     @PostMapping("/{id}/response/create")
     @PreAuthorize("hasRole('CUSTOMER')")
-    String responseCreate( @RequestObject @Valid ReceiptResponseCreateRequest createRequest, UserDetails userDetails, @PathVariable("id") Long id) {
+    String responseCreate(@RequestObject @Valid ReceiptResponseCreateRequest createRequest, UserDetails userDetails,
+            @PathVariable("id") Long id) {
         createRequest.setReceiptId(id);
-        receiptResponseService.createNew(createRequest,userDetails.getUsername());
-        return "redirect:/order/"+id;
+        receiptResponseService.createNew(createRequest, userDetails.getUsername());
+        return "redirect:/order/" + id;
     }
 
     @PostMapping("/{id}/status/change")
-    String updateStatus(UserDetails userDetails,@PathVariable("id") Long id,@RequestParam("statusId") Long statusId) {
-        ReceiptDTO receipt = receiptService.updateStatus(id,statusId,userDetails.getUsername());
-        return "redirect:/order/"+receipt.getId();
+    @PreAuthorize("isAuthenticated()")
+    String updateStatus(UserDetails userDetails, @PathVariable("id") Long id, @RequestParam("statusId") Long statusId) {
+        ReceiptDTO receipt = receiptService.updateStatus(id, statusId, userDetails.getUsername());
+        return "redirect:/order/" + receipt.getId();
     }
 
-    @GetMapping(value ="/{id}/pay")
+    @GetMapping(value = "/{id}/pay")
     @PreAuthorize("hasRole('CUSTOMER')")
-    String pay(HttpServletRequest request,  UserDetails userDetails, @PathVariable("id") Long id) {
+    String pay(HttpServletRequest request, UserDetails userDetails, @PathVariable("id") Long id) {
         ReceiptDTO receipt = receiptService.findById(id);
         List<WalletDTO> wallets = walletService.findAllByUsername(userDetails.getUsername());
-       request.setAttribute("order",receipt);
-       request.setAttribute("wallets",wallets);
+        request.setAttribute("order", receipt);
+        request.setAttribute("wallets", wallets);
         return "orderPay";
     }
 
     @PostMapping("/{id}/pay")
     @PreAuthorize("hasRole('CUSTOMER')")
-    String pay(UserDetails userDetails,@RequestObject @Valid ReceiptPayRequest payRequest, @PathVariable("id") Long id) {
+    String pay(UserDetails userDetails, @RequestObject @Valid ReceiptPayRequest payRequest,
+            @PathVariable("id") Long id) {
         payRequest.setId(id);
-        ReceiptDTO receipt = receiptService.pay(payRequest,userDetails.getUsername());
-        return "redirect:/order/"+receipt.getId();
+        ReceiptDTO receipt = receiptService.pay(payRequest, userDetails.getUsername());
+        return "redirect:/order/" + receipt.getId();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    @PostAuthorize("hasRole('MASTER') || hasRole('MANAGER') || hasRole('ADMIN') ||" +
+            " (hasRole('CUSTOMER') && req.getAttribute('order').user.username == auth.principal.username)")
     String show(HttpServletRequest request, @PathVariable("id") Long id) {
         ReceiptDTO receipt = receiptService.findById(id);
-        if (receiptResponseService.existByReceiptId(id)){
+        if (receiptResponseService.existByReceiptId(id)) {
             ReceiptResponseDTO response = receiptResponseService.findByReceiptId(id);
-            log.trace(" Response {}",response);
-            request.setAttribute("response",response);
+            log.trace(" Response {}", response);
+            request.setAttribute("response", response);
         }
-        log.trace("Work {}",receipt);
-        request.setAttribute("order",receipt);
+        log.trace("Work {}", receipt);
+        request.setAttribute("order", receipt);
         return "order";
     }
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('CUSTOMER')")
     String create(UserDetails userDetails, @RequestJsonObject @Valid ReceiptCreateRequest createRequest) {
-        ReceiptDTO receipt = receiptService.createNew(createRequest,userDetails.getUsername());
-        return "redirect:/order/"+receipt.getId();
+        ReceiptDTO receipt = receiptService.createNew(createRequest, userDetails.getUsername());
+        return "redirect:/order/" + receipt.getId();
     }
+
     @GetMapping("/create")
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('ADMIN')")
     String create(HttpServletRequest request, @RequestParam("category") String category) {
         RepairCategoryDTO repairCategory = repairCategoryService.findByKeyName(category);
         List<RepairWorkDTO> repairWorks = repairWorkService.findByCategoryKey(category);
-        AppCurrency appCurrency = appCurrencyService.findByCode(CurrencyUnitContextHolder.getCurrencyUnit().getCurrencyCode());
-        request.setAttribute("works",repairWorks);
-        request.setAttribute("category",repairCategory);
-        request.setAttribute("currency",appCurrency);
+        AppCurrency appCurrency = appCurrencyService.findByCode(
+                CurrencyUnitContextHolder.getCurrencyUnit().getCurrencyCode());
+        request.setAttribute("works", repairWorks);
+        request.setAttribute("category", repairCategory);
+        request.setAttribute("currency", appCurrency);
         return "orderCreate";
     }
 
