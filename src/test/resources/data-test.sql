@@ -5,6 +5,7 @@ insert into app_currencies (code) values ('NonUsed');
 
 insert into app_locales(lang) values('en');
 insert into app_locales(lang) values('uk');
+insert into app_locales (lang) values ('NonUsed');
 
 insert into users (email, first_name, last_name, password, phone, username,creation_date,last_modified_by,last_modified_date) values ('redstrike@gmail.com','Red','Strike','ffaad1ad2481038994f8d0ce7849ddaf7d6d25d242542c64419936a9bc5cbeb71e32bf88c926166f','+380 63 108 7165','RedStriker','2021-01-10T14:23:22Z','test','2021-02-10T14:23:22Z');
 insert into users (email, first_name, last_name, password, phone, username,creation_date,last_modified_by,last_modified_date) values ('darkstrike@gmail.com','Dark','Strike','f2a9f539b05c420042681336df6c130ed7a3f276001748856cfc3d604e7d50a16cbd0030e4fe7fe8','+380 63 108 7165','DarkStriker','2021-01-10T14:23:22Z','test','2021-02-10T14:23:22Z');
