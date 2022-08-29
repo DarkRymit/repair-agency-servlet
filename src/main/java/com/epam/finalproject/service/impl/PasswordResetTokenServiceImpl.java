@@ -1,6 +1,8 @@
 package com.epam.finalproject.service.impl;
 
 import com.epam.finalproject.framework.beans.annotation.Value;
+import com.epam.finalproject.framework.data.transaction.PlatformTransactionManager;
+import com.epam.finalproject.framework.data.transaction.TransactionStatus;
 import com.epam.finalproject.framework.security.password.PasswordEncoder;
 import com.epam.finalproject.framework.web.annotation.Service;
 import com.epam.finalproject.model.entity.PasswordResetToken;
@@ -23,17 +25,21 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(PasswordResetTokenServiceImpl.class);
     private final Integer expiration;
 
-    PasswordResetTokenRepository passwordResetTokenRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public PasswordResetTokenServiceImpl(@Value("1400") Integer expiration, PasswordResetTokenRepository passwordResetTokenRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final PlatformTransactionManager transactionManager;
+
+    public PasswordResetTokenServiceImpl(@Value("1400") Integer expiration, PasswordResetTokenRepository passwordResetTokenRepository, UserRepository userRepository, PasswordEncoder passwordEncoder,
+            PlatformTransactionManager transactionManager) {
         this.expiration = expiration;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.transactionManager = transactionManager;
     }
 
     @Override
@@ -66,10 +72,20 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 
     @Override
     public void newPassword(PasswordResetToken token, NewPasswordRequest newPasswordRequest) {
-        User user = token.getUser();
-        user.setPassword(passwordEncoder.encode(newPasswordRequest.getPassword()));
-        userRepository.save(user);
-        passwordResetTokenRepository.delete(token);
+        TransactionStatus ts = transactionManager.getTransaction();
+        try {
+
+            User user = token.getUser();
+            user.setPassword(passwordEncoder.encode(newPasswordRequest.getPassword()));
+            userRepository.save(user);
+            passwordResetTokenRepository.delete(token);
+
+        } catch (Exception e) {
+            transactionManager.rollback(ts);
+            throw new RuntimeException(e);
+        }
+        transactionManager.commit(ts);
+
     }
     private Instant calculateExpiryDate() {
         return Instant.now().plus(Duration.ofMinutes(expiration));

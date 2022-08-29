@@ -1,6 +1,8 @@
 package com.epam.finalproject.service.impl;
 
 import com.epam.finalproject.framework.beans.annotation.Value;
+import com.epam.finalproject.framework.data.transaction.PlatformTransactionManager;
+import com.epam.finalproject.framework.data.transaction.TransactionStatus;
 import com.epam.finalproject.framework.web.annotation.Service;
 import com.epam.finalproject.model.entity.Role;
 import com.epam.finalproject.model.entity.User;
@@ -24,17 +26,23 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(VerificationTokenServiceImpl.class);
     private final Integer expiration;
 
-    VerificationTokenRepository verificationTokenRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    public VerificationTokenServiceImpl(@Value("1400")Integer expiration, VerificationTokenRepository verificationTokenRepository, UserRepository userRepository, RoleRepository roleRepository) {
+    private final PlatformTransactionManager transactionManager;
+
+    public VerificationTokenServiceImpl(@Value("1400") Integer expiration,
+            VerificationTokenRepository verificationTokenRepository, UserRepository userRepository,
+            RoleRepository roleRepository,
+            PlatformTransactionManager transactionManager) {
         this.expiration = expiration;
         this.verificationTokenRepository = verificationTokenRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.transactionManager = transactionManager;
     }
 
     @Override
@@ -67,12 +75,18 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
 
     @Override
     public void verifyByToken(VerificationToken token) {
-        Role role = roleRepository.findByName(RoleEnum.UNVERIFIED).orElseThrow();
-        User user = token.getUser();
-        user.deleteRole(role);
-        roleRepository.deleteRoleForUser(role,user);
-        userRepository.save(user);
-        verificationTokenRepository.delete(token);
+        TransactionStatus ts = transactionManager.getTransaction();
+        try {
+            Role role = roleRepository.findByName(RoleEnum.UNVERIFIED).orElseThrow();
+            User user = token.getUser();
+            user.deleteRole(role);
+            roleRepository.deleteRoleForUser(role, user);
+            userRepository.save(user);
+            verificationTokenRepository.delete(token);
+        } catch (Exception e) {
+            transactionManager.rollback(ts);
+            throw new RuntimeException(e);
+        }
     }
 
     private Instant calculateExpiryDate() {

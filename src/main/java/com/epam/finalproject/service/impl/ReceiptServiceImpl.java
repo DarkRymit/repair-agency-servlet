@@ -1,6 +1,8 @@
 package com.epam.finalproject.service.impl;
 
 import com.epam.finalproject.dto.ReceiptDTO;
+import com.epam.finalproject.framework.data.transaction.PlatformTransactionManager;
+import com.epam.finalproject.framework.data.transaction.TransactionStatus;
 import com.epam.finalproject.framework.web.annotation.Service;
 import com.epam.finalproject.model.entity.*;
 import com.epam.finalproject.model.entity.enums.ReceiptStatusEnum;
@@ -28,28 +30,31 @@ import java.util.stream.Collectors;
 public class ReceiptServiceImpl implements ReceiptService {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(ReceiptServiceImpl.class);
-    ReceiptRepository receiptRepository;
+    private final ReceiptRepository receiptRepository;
 
-    ReceiptStatusRepository receiptStatusRepository;
+    private final ReceiptStatusRepository receiptStatusRepository;
 
-    ReceiptStatusFlowRepository receiptStatusFlowRepository;
+    private final ReceiptStatusFlowRepository receiptStatusFlowRepository;
 
-    RepairCategoryRepository repairCategoryRepository;
+    private final RepairCategoryRepository repairCategoryRepository;
 
-    RepairWorkRepository repairWorkRepository;
+    private final RepairWorkRepository repairWorkRepository;
 
-    AppCurrencyRepository appCurrencyRepository;
+    private final AppCurrencyRepository appCurrencyRepository;
 
-    WalletRepository walletRepository;
+    private final WalletRepository walletRepository;
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+
+    private final PlatformTransactionManager transactionManager;
 
     public ReceiptServiceImpl(ReceiptRepository receiptRepository, ReceiptStatusRepository receiptStatusRepository,
             ReceiptStatusFlowRepository receiptStatusFlowRepository, RepairCategoryRepository repairCategoryRepository,
             RepairWorkRepository repairWorkRepository, AppCurrencyRepository appCurrencyRepository,
-            WalletRepository walletRepository, UserRepository userRepository, ModelMapper modelMapper) {
+            WalletRepository walletRepository, UserRepository userRepository, ModelMapper modelMapper,
+            PlatformTransactionManager transactionManager) {
         this.receiptRepository = receiptRepository;
         this.receiptStatusRepository = receiptStatusRepository;
         this.receiptStatusFlowRepository = receiptStatusFlowRepository;
@@ -59,98 +64,123 @@ public class ReceiptServiceImpl implements ReceiptService {
         this.walletRepository = walletRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.transactionManager = transactionManager;
     }
 
     @Override
     public ReceiptDTO createNew(ReceiptCreateRequest createRequest, String username) {
-        Receipt receipt = new Receipt();
+        TransactionStatus ts = transactionManager.getTransaction();
+        try {
+            Receipt receipt = new Receipt();
 
-        AppCurrency currency = appCurrencyRepository.findByCode(createRequest.getPriceCurrency()).orElseThrow();
+            AppCurrency currency = appCurrencyRepository.findByCode(createRequest.getPriceCurrency()).orElseThrow();
 
-        User customer = userRepository.findByUsername(username).orElseThrow();
+            User customer = userRepository.findByUsername(username).orElseThrow();
 
-        RepairCategory category = repairCategoryRepository.findById(createRequest.getCategoryId()).orElseThrow();
+            RepairCategory category = repairCategoryRepository.findById(createRequest.getCategoryId()).orElseThrow();
 
 
-        Set<ReceiptItem> receiptItems = getReceiptItemSet(createRequest, receipt);
+            Set<ReceiptItem> receiptItems = getReceiptItemSet(createRequest, receipt);
 
-        ReceiptDelivery delivery = buildBy(createRequest.getReceiptDelivery(), receipt);
+            ReceiptDelivery delivery = buildBy(createRequest.getReceiptDelivery(), receipt);
 
-        receipt.setUser(customer);
+            receipt.setUser(customer);
 
-        receipt.setStatus(receiptStatusRepository.findByName(ReceiptStatusEnum.CREATED).orElseThrow());
+            receipt.setStatus(receiptStatusRepository.findByName(ReceiptStatusEnum.CREATED).orElseThrow());
 
-        receipt.setCategory(category);
+            receipt.setCategory(category);
 
-        receipt.setPriceCurrency(currency);
+            receipt.setPriceCurrency(currency);
 
-        receipt.setItems(receiptItems);
+            receipt.setItems(receiptItems);
 
-        receipt.setDelivery(delivery);
+            receipt.setDelivery(delivery);
 
-        receipt.setNote(createRequest.getNote());
+            receipt.setNote(createRequest.getNote());
 
-        receipt.setCreationDate(Instant.now());
+            receipt.setCreationDate(Instant.now());
 
-        receipt.setLastModifiedDate(Instant.now());
+            receipt.setLastModifiedDate(Instant.now());
 
-        receiptRepository.save(receipt);
+            receiptRepository.save(receipt);
 
-        receipt.getDelivery().setReceiptId(receipt.getId());
+            receipt.getDelivery().setReceiptId(receipt.getId());
 
-        receiptRepository.saveDelivery(receipt.getDelivery());
+            receiptRepository.saveDelivery(receipt.getDelivery());
 
-        receiptItems.forEach(receiptItem -> receiptRepository.saveItem(receiptItem));
+            receiptItems.forEach(receiptRepository::saveItem);
 
-        return constructDTO(receipt);
+            ReceiptDTO result = constructDTO(receipt);
+            transactionManager.commit(ts);
+            return result;
+        } catch (Exception e) {
+            transactionManager.rollback(ts);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public ReceiptDTO update(ReceiptUpdateRequest request) {
-        Receipt receipt = receiptRepository.findById(request.getId()).orElseThrow();
+        TransactionStatus ts = transactionManager.getTransaction();
+        try {
+            Receipt receipt = receiptRepository.findById(request.getId()).orElseThrow();
 
-        AppCurrency currency = appCurrencyRepository.findByCode(request.getPriceCurrency()).orElseThrow();
+            AppCurrency currency = appCurrencyRepository.findByCode(request.getPriceCurrency()).orElseThrow();
 
-        Set<ReceiptItem> receiptItems = getReceiptItemSet(request, receipt);
+            Set<ReceiptItem> receiptItems = getReceiptItemSet(request, receipt);
 
-        if (!request.getMasterUsername().isBlank()) {
-            receipt.setMaster(userRepository.findByUsername(request.getMasterUsername()).orElseThrow());
+            if (!request.getMasterUsername().isBlank()) {
+                receipt.setMaster(userRepository.findByUsername(request.getMasterUsername()).orElseThrow());
+            }
+
+            receipt.setStatus(receiptStatusRepository.findByName(request.getReceiptStatus()).orElseThrow());
+
+            receipt.getItems().forEach(i -> receiptRepository.deleteItem(i));
+
+            receipt.getItems().clear();
+            receipt.getItems().addAll(receiptItems);
+
+            receipt.setTotalPrice(getReceiptTotalPriceAmount(receiptItems));
+
+            receipt.setPriceCurrency(currency);
+
+            mergeDeliveryInto(receipt, buildBy(request.getReceiptDelivery(), receipt));
+
+            receipt.setNote(request.getNote());
+
+            Receipt resultReceipt = receiptRepository.save(receipt);
+            receipt.getItems().forEach(i -> receiptRepository.saveItem(i));
+            receiptRepository.saveDelivery(receipt.getDelivery());
+
+            ReceiptDTO result = constructDTO(receipt);
+            transactionManager.commit(ts);
+            return result;
+        } catch (Exception e) {
+            transactionManager.rollback(ts);
+            throw new RuntimeException(e);
         }
-
-        receipt.setStatus(receiptStatusRepository.findByName(request.getReceiptStatus()).orElseThrow());
-
-        receipt.getItems().forEach(i -> receiptRepository.deleteItem(i));
-
-        receipt.getItems().clear();
-        receipt.getItems().addAll(receiptItems);
-
-        receipt.setTotalPrice(getReceiptTotalPriceAmount(receiptItems));
-
-        receipt.setPriceCurrency(currency);
-
-        mergeDeliveryInto(receipt, buildBy(request.getReceiptDelivery(), receipt));
-
-        receipt.setNote(request.getNote());
-
-        Receipt resultReceipt = receiptRepository.save(receipt);
-        receipt.getItems().forEach(i -> receiptRepository.saveItem(i));
-        receiptRepository.saveDelivery(receipt.getDelivery());
-
-        return constructDTO(resultReceipt);
     }
 
     @Override
     public ReceiptDTO updateStatus(Long receiptId, Long statusId, String username) {
-        Receipt receipt = receiptRepository.findById(receiptId).orElseThrow();
-        ReceiptStatus newStatus = receiptStatusRepository.findById(statusId).orElseThrow();
-        User user = userRepository.findByUsername(username).orElseThrow();
-        if (!receiptStatusFlowRepository.existsByFromStatusAndToStatusAndRoleIn(receipt.getStatus(), newStatus,
-                user.getRoles())) {
-            throw new NoSuchElementException("not supported");
+        TransactionStatus ts = transactionManager.getTransaction();
+        try {
+            Receipt receipt = receiptRepository.findById(receiptId).orElseThrow();
+            ReceiptStatus newStatus = receiptStatusRepository.findById(statusId).orElseThrow();
+            User user = userRepository.findByUsername(username).orElseThrow();
+            if (!receiptStatusFlowRepository.existsByFromStatusAndToStatusAndRoleIn(receipt.getStatus(), newStatus,
+                    user.getRoles())) {
+                throw new NoSuchElementException("not supported");
+            }
+            receipt.setStatus(newStatus);
+            receiptRepository.save(receipt);
+            ReceiptDTO result = constructDTO(receipt);
+            transactionManager.commit(ts);
+            return result;
+        } catch (Exception e) {
+            transactionManager.rollback(ts);
+            throw new RuntimeException(e);
         }
-        receipt.setStatus(newStatus);
-        Receipt result = receiptRepository.save(receipt);
-        return constructDTO(result);
     }
 
     @Override
@@ -165,37 +195,44 @@ public class ReceiptServiceImpl implements ReceiptService {
 
     @Override
     public ReceiptDTO pay(ReceiptPayRequest payRequest, String username) {
+        TransactionStatus ts = transactionManager.getTransaction();
+        try {
+            Receipt receipt = receiptRepository.findById(payRequest.getId()).orElseThrow();
+            if (!receipt.getStatus().getName().equals(ReceiptStatusEnum.WAIT_FOR_PAYMENT)) {
+                throw new IllegalStateException("Receipt not wait for payment");
+            }
+            Wallet wallet = walletRepository.findById(payRequest.getWalletId()).orElseThrow();
+            if (!userRepository.findById(wallet.getUserId()).orElseThrow().getUsername().equals(username)) {
+                throw new IllegalArgumentException("Wallet username and username not match");
+            }
+            if (!receipt.getUser().getUsername().equals(username)) {
+                throw new IllegalArgumentException("Receipt username and username not match");
+            }
+            Money receiptMoney = Money.of(receipt.getTotalPrice(), receipt.getPriceCurrency().getCode());
+            Money walletMoney = Money.of(wallet.getMoneyAmount(), wallet.getMoneyCurrency().getCode());
 
-        Receipt receipt = receiptRepository.findById(payRequest.getId()).orElseThrow();
-        if (!receipt.getStatus().getName().equals(ReceiptStatusEnum.WAIT_FOR_PAYMENT)) {
-            throw new IllegalStateException("Receipt not wait for payment");
-        }
-        Wallet wallet = walletRepository.findById(payRequest.getWalletId()).orElseThrow();
-        if (!userRepository.findById(wallet.getUserId()).orElseThrow().getUsername().equals(username)) {
-            throw new IllegalArgumentException("Wallet username and username not match");
-        }
-        if (!receipt.getUser().getUsername().equals(username)) {
-            throw new IllegalArgumentException("Receipt username and username not match");
-        }
-        Money receiptMoney = Money.of(receipt.getTotalPrice(), receipt.getPriceCurrency().getCode());
-        Money walletMoney = Money.of(wallet.getMoneyAmount(), wallet.getMoneyCurrency().getCode());
 
+            if (!receiptMoney.getCurrency().equals(walletMoney.getCurrency())) {
+                throw new IllegalArgumentException("Not Match Currency");
+            }
+            Money walletRemainder = walletMoney.subtract(receiptMoney);
+            if (walletRemainder.isNegative()) {
+                throw new IllegalStateException("Negative money on wallet remain");
+            }
+            wallet.setMoneyAmount(walletRemainder.getNumberStripped());
+            walletRepository.save(wallet);
 
-        if (!receiptMoney.getCurrency().equals(walletMoney.getCurrency())) {
-            throw new IllegalArgumentException("Not Match Currency");
+            ReceiptStatus paid = receiptStatusRepository.findByName(ReceiptStatusEnum.PAID).orElseThrow();
+            receipt.setStatus(paid);
+            receipt = receiptRepository.save(receipt);
+
+            ReceiptDTO result = constructDTO(receipt);
+            transactionManager.commit(ts);
+            return result;
+        } catch (Exception e) {
+            transactionManager.rollback(ts);
+            throw new RuntimeException(e);
         }
-        Money walletRemainder = walletMoney.subtract(receiptMoney);
-        if (walletRemainder.isNegative()) {
-            throw new IllegalStateException("Negative money on wallet remain");
-        }
-        wallet.setMoneyAmount(walletRemainder.getNumberStripped());
-        walletRepository.save(wallet);
-
-        ReceiptStatus paid = receiptStatusRepository.findByName(ReceiptStatusEnum.PAID).orElseThrow();
-        receipt.setStatus(paid);
-        receipt = receiptRepository.save(receipt);
-
-        return constructDTO(receipt);
 
     }
 

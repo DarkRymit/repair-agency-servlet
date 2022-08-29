@@ -19,13 +19,13 @@ import org.slf4j.Logger;
 public class ReceiptResponseServiceImpl implements ReceiptResponseService {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(ReceiptResponseServiceImpl.class);
-    ReceiptRepository receiptRepository;
+    private final ReceiptRepository receiptRepository;
 
-    ReceiptResponseRepository receiptResponseRepository;
+    private final ReceiptResponseRepository receiptResponseRepository;
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public ReceiptResponseServiceImpl(ReceiptRepository receiptRepository,
             ReceiptResponseRepository receiptResponseRepository, UserRepository userRepository,

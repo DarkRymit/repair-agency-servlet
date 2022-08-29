@@ -1,13 +1,12 @@
 package com.epam.finalproject.service.impl;
 
+import com.epam.finalproject.framework.data.transaction.PlatformTransactionManager;
 import com.epam.finalproject.framework.security.password.PasswordEncoder;
 import com.epam.finalproject.model.entity.PasswordResetToken;
 import com.epam.finalproject.model.entity.Role;
 import com.epam.finalproject.model.entity.User;
-import com.epam.finalproject.model.entity.VerificationToken;
 import com.epam.finalproject.model.entity.enums.RoleEnum;
 import com.epam.finalproject.repository.PasswordResetTokenRepository;
-import com.epam.finalproject.repository.RoleRepository;
 import com.epam.finalproject.repository.UserRepository;
 import com.epam.finalproject.request.NewPasswordRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,13 +38,16 @@ class PasswordResetTokenServiceImplTest {
     @Mock
     PasswordEncoder passwordEncoder;
 
+    @Mock
+    PlatformTransactionManager transactionManager;
+
 
     PasswordResetTokenServiceImpl passwordResetTokenService;
 
     @BeforeEach
     void setMockOutput() {
         passwordResetTokenService = new PasswordResetTokenServiceImpl(1440, passwordResetTokenRepository, userRepository,
-                passwordEncoder);
+                passwordEncoder, transactionManager);
         user = User.builder()
                 .id(404L)
                 .username("NotDBStriker")

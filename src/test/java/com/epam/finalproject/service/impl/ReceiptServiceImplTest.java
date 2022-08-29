@@ -1,6 +1,7 @@
 package com.epam.finalproject.service.impl;
 
 import com.epam.finalproject.dto.*;
+import com.epam.finalproject.framework.data.transaction.PlatformTransactionManager;
 import com.epam.finalproject.model.entity.*;
 import com.epam.finalproject.model.entity.enums.ReceiptStatusEnum;
 import com.epam.finalproject.model.entity.enums.RoleEnum;
@@ -55,6 +56,9 @@ class ReceiptServiceImplTest {
     AppCurrencyRepository appCurrencyRepository;
     @Mock
     WalletRepository walletRepository;
+
+    @Mock
+    PlatformTransactionManager transactionManager;
     ReceiptServiceImpl receiptService;
     User user;
     AppCurrency currency;
@@ -91,7 +95,7 @@ class ReceiptServiceImplTest {
                 .build();
         receiptService = new ReceiptServiceImpl(receiptRepository, receiptStatusRepository, receiptStatusFlowRepository,
                 repairCategoryRepository, repairWorkRepository, appCurrencyRepository, walletRepository, userRepository,
-                MODEL_MAPPER);
+                MODEL_MAPPER, transactionManager);
     }
 
 

@@ -1,5 +1,6 @@
 package com.epam.finalproject.service.impl;
 
+import com.epam.finalproject.framework.data.transaction.PlatformTransactionManager;
 import com.epam.finalproject.model.entity.Role;
 import com.epam.finalproject.model.entity.User;
 import com.epam.finalproject.model.entity.VerificationToken;
@@ -39,13 +40,16 @@ class VerificationTokenServiceImplTest {
     @Mock
     VerificationTokenRepository verificationTokenRepository;
 
+    @Mock
+    PlatformTransactionManager transactionManager;
+
 
     VerificationTokenServiceImpl verificationTokenService;
 
     @BeforeEach
     void setMockOutput() {
         verificationTokenService = new VerificationTokenServiceImpl(1440, verificationTokenRepository, userRepository,
-                roleRepository);
+                roleRepository, transactionManager);
         role = new Role(RoleEnum.UNVERIFIED);
         user = User.builder()
                 .id(404L)
