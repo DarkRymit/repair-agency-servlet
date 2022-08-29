@@ -88,7 +88,6 @@ public class AuthController {
         }
         User user = userService.signUpNewUserAccount(form);
         log.info("Created user: {}",user);
-        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request.getLocale(), getAppUrl(request)));
         return "redirect:/auth/confirmRegister";
     }
 
@@ -171,7 +170,7 @@ public class AuthController {
     @PreAuthorize("isAnonymous()")
     String resetPassword(HttpServletRequest request,@RequestObject @Valid PasswordResetRequest resetRequest){
         User user = userService.findByEmail(resetRequest.getEmail()).orElseThrow();
-        eventPublisher.publishEvent(new OnPasswordResetEvent(user, request.getLocale(), getAppUrl(request)));
+        eventPublisher.publishEvent(new OnPasswordResetEvent(user, request.getLocale()));
         return "redirect:/auth/resetpassword/confirm";
     }
 
@@ -202,7 +201,4 @@ public class AuthController {
         return "redirect:/auth/signin";
     }
 
-    private String getAppUrl(HttpServletRequest request) {
-        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
-    }
 }

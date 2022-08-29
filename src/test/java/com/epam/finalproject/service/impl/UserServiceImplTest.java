@@ -2,6 +2,7 @@ package com.epam.finalproject.service.impl;
 
 import com.epam.finalproject.dto.UserDTO;
 import com.epam.finalproject.exceptions.SingUpException;
+import com.epam.finalproject.framework.context.ApplicationEventPublisher;
 import com.epam.finalproject.framework.data.jdbc.DataAccessException;
 import com.epam.finalproject.framework.data.jdbc.JdbcTemplate;
 import com.epam.finalproject.framework.data.sql.mapping.SqlEntityMapper;
@@ -57,6 +58,9 @@ class UserServiceImplTest {
     @Mock
     static PlatformTransactionManager transactionManager;
 
+    @Mock
+    static ApplicationEventPublisher publisher;
+
 
     static ModelMapper modelMapper;
 
@@ -93,7 +97,7 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         userService = new UserServiceImpl(userRepository, roleRepository, passwordEncoder, transactionManager,
-                modelMapper);
+                modelMapper,publisher);
     }
 
     private static Converter<Instant, ZonedDateTime> instantZonedDateTimeConverter() {

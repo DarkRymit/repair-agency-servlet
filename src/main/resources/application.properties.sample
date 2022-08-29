@@ -6,3 +6,5 @@ mail.smtp.port = 587
 
 mail.smtp.auth.username = your mail
 mail.smtp.auth.password = your password
+
+mail.appUrl = your app url include context without / in end

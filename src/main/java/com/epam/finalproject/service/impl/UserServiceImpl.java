@@ -2,6 +2,8 @@ package com.epam.finalproject.service.impl;
 
 import com.epam.finalproject.dto.UserDTO;
 import com.epam.finalproject.exceptions.SingUpException;
+import com.epam.finalproject.framework.context.ApplicationEventPublisher;
+import com.epam.finalproject.framework.context.i18n.LocaleContextHolder;
 import com.epam.finalproject.framework.data.transaction.PlatformTransactionManager;
 import com.epam.finalproject.framework.data.transaction.TransactionStatus;
 import com.epam.finalproject.framework.security.password.PasswordEncoder;
@@ -9,6 +11,7 @@ import com.epam.finalproject.framework.web.annotation.Service;
 import com.epam.finalproject.model.entity.Role;
 import com.epam.finalproject.model.entity.User;
 import com.epam.finalproject.model.entity.enums.RoleEnum;
+import com.epam.finalproject.model.event.OnRegistrationCompleteEvent;
 import com.epam.finalproject.repository.RoleRepository;
 import com.epam.finalproject.repository.UserRepository;
 import com.epam.finalproject.request.SignUpRequest;
@@ -30,15 +33,18 @@ public class UserServiceImpl implements UserService {
 
     PlatformTransactionManager transactionManager;
 
+    ApplicationEventPublisher eventPublisher;
+
     ModelMapper modelMapper;
 
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-            PasswordEncoder passwordEncoder, PlatformTransactionManager transactionManager, ModelMapper modelMapper) {
+            PasswordEncoder passwordEncoder, PlatformTransactionManager transactionManager, ModelMapper modelMapper,ApplicationEventPublisher eventPublisher) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.transactionManager = transactionManager;
         this.modelMapper = modelMapper;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -59,6 +65,7 @@ public class UserServiceImpl implements UserService {
             roleRepository.addRoleForUser(unverified, user);
             roleRepository.addRoleForUser(customer, user);
             result = user;
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
             transactionManager.rollback(ts);
             throw new SingUpException(e);

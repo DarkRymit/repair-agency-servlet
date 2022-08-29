@@ -14,13 +14,18 @@ import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
+import java.util.Properties;
+
 @Service
 public class SunEmailService implements EmailService {
 
     private final Session messageSession;
 
-    public SunEmailService(Session messageSession) {
+    private final Properties properties;
+
+    public SunEmailService(Session messageSession, Properties properties) {
         this.messageSession = messageSession;
+        this.properties = properties;
     }
 
     @Override
@@ -45,7 +50,7 @@ public class SunEmailService implements EmailService {
             MimeMessage message = createMimeMessage();
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(event.getUser().getEmail()));
             message.setSubject("Verification");
-            message.setText(event.getAppUrl()+"/auth/confirmRegister/" + token.getToken());
+            message.setText(properties.getProperty("mail.appUrl")+"/auth/confirmRegister/" + token.getToken());
             send(message);
         } catch (MessagingException e) {
             throw new MailException(e);
@@ -59,7 +64,7 @@ public class SunEmailService implements EmailService {
             MimeMessage message = createMimeMessage();
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(event.getUser().getEmail()));
             message.setSubject("Password reset");
-            message.setText(event.getAppUrl()+"/auth/resetpassword/confirm/" + token.getToken());
+            message.setText(properties.getProperty("mail.appUrl")+"/auth/resetpassword/confirm/" + token.getToken());
             send(message);
         } catch (MessagingException e) {
             throw new MailException(e);
