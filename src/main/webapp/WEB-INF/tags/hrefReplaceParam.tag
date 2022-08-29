@@ -2,10 +2,7 @@
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ attribute name="name" required="true" type="java.lang.String" %>
 <%@ attribute name="value" required="true" type="java.lang.String" %>
-<c:set var="requestPath" value="${pageContext.request.getAttribute('jakarta.servlet.forward.request_uri')}" />
-<c:set var="contextPath" value="${pageContext.request.contextPath}" />
-<c:set var="url" value="${fn:substring(requestPath, fn:length(contextPath), fn:length(requestPath))}" />
-href = <c:url value="${url}">
+href = <c:url value="">
 
     <%--
       replaces or adds a param to a URL
