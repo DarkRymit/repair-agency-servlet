@@ -9,11 +9,9 @@ import com.epam.finalproject.framework.data.PageRequest;
 import com.epam.finalproject.framework.security.UserDetails;
 import com.epam.finalproject.framework.security.annotation.PreAuthorize;
 import com.epam.finalproject.framework.web.annotation.*;
+import com.epam.finalproject.model.entity.AppCurrency;
 import com.epam.finalproject.request.search.ReceiptWithCustomerSearchRequest;
-import com.epam.finalproject.service.ReceiptResponseService;
-import com.epam.finalproject.service.ReceiptStatusFlowService;
-import com.epam.finalproject.service.SearchService;
-import com.epam.finalproject.service.WalletService;
+import com.epam.finalproject.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -42,40 +40,53 @@ public class CustomerController {
 
     WalletService walletService;
 
+    AppCurrencyService appCurrencyService;
+
     public CustomerController(SearchService searchService, ReceiptResponseService receiptResponseService,
-            ReceiptStatusFlowService receiptStatusFlowService, WalletService walletService) {
+            ReceiptStatusFlowService receiptStatusFlowService, WalletService walletService,
+            AppCurrencyService appCurrencyService) {
         this.searchService = searchService;
         this.receiptResponseService = receiptResponseService;
         this.receiptStatusFlowService = receiptStatusFlowService;
         this.walletService = walletService;
+        this.appCurrencyService = appCurrencyService;
     }
 
 
     @GetMapping("/orders")
-    String ordersPage(HttpServletRequest request, UserDetails userDetails,@RequestObject @Valid ReceiptWithCustomerSearchRequest searchRequest) {
-        log.trace("Request {}",searchRequest);
-        Page<ReceiptDTO> receipts = searchService.findBySearch(searchRequest,userDetails.getUsername());
+    String ordersPage(HttpServletRequest request, UserDetails userDetails,
+            @RequestObject @Valid ReceiptWithCustomerSearchRequest searchRequest) {
+        log.trace("Request {}", searchRequest);
+        Page<ReceiptDTO> receipts = searchService.findBySearch(searchRequest, userDetails.getUsername());
         List<ReceiptStatusFlowDTO> flows = receiptStatusFlowService.listAllAvailableForUser(userDetails.getUsername());
-        request.setAttribute("flows",flows);
-        request.setAttribute("search",searchRequest);
+        request.setAttribute("flows", flows);
+        request.setAttribute("search", searchRequest);
         request.setAttribute("receipts", receipts);
         request.setAttribute(ACTIVE, "orders");
         request.setAttribute(TYPE, CUSTOMER);
         return MASTER_VIEW;
     }
+
     @GetMapping("/wallets")
-    String walletsPage(HttpServletRequest request, UserDetails userDetails, @RequestParam(required = false) Integer page) {
+    String walletsPage(HttpServletRequest request, UserDetails userDetails,
+            @RequestParam(required = false) Integer page) {
         int actualPage = Optional.ofNullable(page).orElse(0);
-        Page<WalletDTO> wallets = walletService.findAllByUsername(PageRequest.of(actualPage,5),userDetails.getUsername());
+        Page<WalletDTO> wallets = walletService.findAllByUsername(PageRequest.of(actualPage, 5),
+                userDetails.getUsername());
+        List<AppCurrency> currencies = appCurrencyService.findAll();
         request.setAttribute("wallets", wallets);
+        request.setAttribute("currencies", currencies);
         request.setAttribute(ACTIVE, "wallets");
         request.setAttribute(TYPE, CUSTOMER);
         return MASTER_VIEW;
     }
+
     @GetMapping("/responses")
-    String responsesPage(HttpServletRequest request, UserDetails userDetails,@RequestParam(required = false) Integer page) {
+    String responsesPage(HttpServletRequest request, UserDetails userDetails,
+            @RequestParam(required = false) Integer page) {
         int actualPage = Optional.ofNullable(page).orElse(0);
-        Page<ReceiptResponseDTO> responses = receiptResponseService.findByCustomerUsername(userDetails.getUsername(), PageRequest.of(actualPage,5));
+        Page<ReceiptResponseDTO> responses = receiptResponseService.findByCustomerUsername(userDetails.getUsername(),
+                PageRequest.of(actualPage, 5));
         request.setAttribute("responses", responses);
         request.setAttribute(ACTIVE, "responses");
         request.setAttribute(TYPE, CUSTOMER);

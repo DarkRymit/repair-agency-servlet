@@ -1,5 +1,7 @@
 <%@ include file="/WEB-INF/pages/fragments/taglib.jspf" %>
-<jsp:useBean id="wallets" scope="request" type="com.epam.finalproject.framework.data.Page<com.epam.finalproject.dto.WalletDTO>"/>
+<jsp:useBean id="wallets" scope="request"
+             type="com.epam.finalproject.framework.data.Page<com.epam.finalproject.dto.WalletDTO>"/>
+<jsp:useBean id="currencies" scope="request" type="java.util.List<com.epam.finalproject.model.entity.AppCurrency>"/>
 <div class="container ms-0">
     <div class="row">
         <div class="col-8">
@@ -15,13 +17,47 @@
                             <div class="card-body">
                                 <h5 class="card-title"><fmt:message key="wallet.name"/></h5>
                                 <h6 class="card-subtitle">${wallet.name}</h6>
-                                <i class="card-text">${wallet.moneyAmount}</i>
+                                <i class="card-text"><fmt:formatNumber value="${wallet.moneyAmount}" minFractionDigits="0"/></i>
                                 <i class="card-text">${wallet.moneyCurrency.code}</i>
                             </div>
                         </div>
                     </div>
                 </c:forEach>
             </div>
+        </div>
+    </div>
+    <div class="row mx-auto">
+        <div class="col-6 mx-auto">
+            <c:set var="requestPath" value="${pageContext.request.getAttribute('jakarta.servlet.forward.request_uri')}" />
+            <c:set var="contextPath" value="${pageContext.request.contextPath}" />
+            <c:set var="url" value="${fn:substring(requestPath, fn:length(contextPath), fn:length(requestPath))}" />
+            <form method="post"
+                    <ext:action path="${url}"/> class="text-center">
+                <input hidden name="redirectUrl"
+                       value="${pageContext.request.getAttribute('jakarta.servlet.forward.request_uri')}">
+
+                <div class="form-group">
+                    <label for="name">
+                        <fmt:message key="wallet.create.name"/>
+                    </label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="currency"><fmt:message
+                            key="wallet.create"/> </label>
+                    <select class="form-control" id="currency" name="currency">
+                        <c:forEach var="currency" items="${currencies}">
+                            <option value="${currency.code}">
+                                <strong>${currency.code}</strong>
+                            </option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submit">
+                    <fmt:message
+                            key="wallet.create"/></button>
+            </form>
         </div>
     </div>
 </div>

@@ -27,6 +27,8 @@ public class Wallet implements Serializable {
     @SqlColumn("money_amount")
     private BigDecimal moneyAmount;
 
+    @SqlReferenceId
+    @SqlColumn("currency_id")
     private AppCurrency moneyCurrency;
 
     public Wallet(Long id, Long userId, String name, BigDecimal moneyAmount, AppCurrency moneyCurrency) {

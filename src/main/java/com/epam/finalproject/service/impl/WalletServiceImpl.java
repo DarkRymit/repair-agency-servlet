@@ -4,13 +4,19 @@ import com.epam.finalproject.dto.WalletDTO;
 import com.epam.finalproject.framework.data.Page;
 import com.epam.finalproject.framework.data.Pageable;
 import com.epam.finalproject.framework.web.annotation.Service;
+import com.epam.finalproject.model.entity.AppCurrency;
+import com.epam.finalproject.model.entity.User;
 import com.epam.finalproject.model.entity.Wallet;
+import com.epam.finalproject.repository.AppCurrencyRepository;
+import com.epam.finalproject.repository.UserRepository;
 import com.epam.finalproject.repository.WalletRepository;
 import com.epam.finalproject.request.AddMoneyRequest;
+import com.epam.finalproject.request.CreateWalletRequest;
 import com.epam.finalproject.service.WalletService;
 import org.javamoney.moneta.Money;
 import org.modelmapper.ModelMapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,11 +25,18 @@ public class WalletServiceImpl implements WalletService {
 
     WalletRepository walletRepository;
 
+    AppCurrencyRepository appCurrencyRepository;
+
+    UserRepository userRepository;
+
     ModelMapper modelMapper;
 
-    public WalletServiceImpl(WalletRepository walletRepository, ModelMapper modelMapper) {
+    public WalletServiceImpl(WalletRepository walletRepository, AppCurrencyRepository appCurrencyRepository,
+            UserRepository userRepository, ModelMapper modelMapper) {
         this.walletRepository = walletRepository;
         this.modelMapper = modelMapper;
+        this.appCurrencyRepository = appCurrencyRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -53,6 +66,22 @@ public class WalletServiceImpl implements WalletService {
         Money walletRemainder = walletMoney.add(addMoney);
         wallet.setMoneyAmount(walletRemainder.getNumberStripped());
         wallet = walletRepository.save(wallet);
+        return constructDTO(wallet);
+    }
+
+    @Override
+    public WalletDTO create(CreateWalletRequest request, String username) {
+        if (walletRepository.findDistinctByNameAndUser_Username(request.getName().trim(), username).isPresent()) {
+            throw new IllegalArgumentException(String.format("Wallet by request exist %s",request));
+        }
+        AppCurrency currency = appCurrencyRepository.findByCode(request.getCurrency()).orElseThrow();
+        User user = userRepository.findByUsername(username).orElseThrow();
+        Wallet wallet = new Wallet();
+        wallet.setUserId(user.getId());
+        wallet.setMoneyCurrency(currency);
+        wallet.setMoneyAmount(BigDecimal.ZERO);
+        wallet.setName(request.getName().trim());
+        walletRepository.save(wallet);
         return constructDTO(wallet);
     }
 

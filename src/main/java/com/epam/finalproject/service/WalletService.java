@@ -4,6 +4,7 @@ import com.epam.finalproject.dto.WalletDTO;
 import com.epam.finalproject.framework.data.Page;
 import com.epam.finalproject.framework.data.Pageable;
 import com.epam.finalproject.request.AddMoneyRequest;
+import com.epam.finalproject.request.CreateWalletRequest;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface WalletService {
     WalletDTO findById(Long id);
 
     WalletDTO addMoney(AddMoneyRequest request);
+
+    WalletDTO create(CreateWalletRequest request,String username);
 }
