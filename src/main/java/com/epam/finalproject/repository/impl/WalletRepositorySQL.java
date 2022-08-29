@@ -24,7 +24,7 @@ import static com.epam.finalproject.repository.impl.SqlAliasConstants.*;
 public class WalletRepositorySQL extends SqlAnnotationDrivenRepository<Wallet> implements WalletRepository {
 
 
-    public static final String SELECT_EAGER = "SELECT "+WALLETS_ALIAS+","+APP_CURRENCIES_ALIAS+"FROM wallets as w " +
+    public static final String SELECT_EAGER = "SELECT " + WALLETS_ALIAS + "," + APP_CURRENCIES_ALIAS + "FROM wallets as w " +
             "left join app_currencies as ac on w.currency_id = ac.id";
     public static final String SELECT_EAGER_FORMAT = "SELECT %s " +
             "FROM wallets as w left join app_currencies as ac on w.currency_id = ac.id";
@@ -67,7 +67,7 @@ public class WalletRepositorySQL extends SqlAnnotationDrivenRepository<Wallet> i
                     wallet.setMoneyCurrency(entityMapper.mapAs(rs, AppCurrency.class, "ac"));
                     return wallet;
                 });
-        long count = template.query(String.format(COUNT_FROM_FORMAT,String.format(SELECT_EAGER_FORMAT,"w.id")
+        long count = template.query(String.format(COUNT_FROM_FORMAT, String.format(SELECT_EAGER_FORMAT, "w.id")
                         + " LEFT JOIN users as u on w.user_id = u.id WHERE u.username = ? "),
                 pss -> pss.setString(1, username), this::getCount);
         return new PageImpl<>(wallets, pageable, count);
@@ -75,6 +75,14 @@ public class WalletRepositorySQL extends SqlAnnotationDrivenRepository<Wallet> i
 
     @Override
     public Optional<Wallet> findDistinctByNameAndUser_Username(String name, String username) {
-        return Optional.empty();
+        return template.query(SELECT_EAGER + " LEFT JOIN users as u on w.user_id = u.id WHERE w.name = ? AND u.username = ?", pss -> {
+                    pss.setString(1, name);
+                    pss.setString(2, username);
+                },
+                wrapToOptional((rs, rowNum) -> {
+                    Wallet wallet = entityMapper.mapAs(rs, entitySqlDefinition, "w");
+                    wallet.setMoneyCurrency(entityMapper.mapAs(rs, AppCurrency.class, "ac"));
+                    return wallet;
+                }));
     }
 }
