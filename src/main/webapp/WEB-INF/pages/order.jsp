@@ -173,7 +173,7 @@
                                             <li class="list-group-item">
                                                 <strong><fmt:message key="order.response.rating.name"/></strong>
                                                 <span>:</span>
-                                                <c:forEach begin="0" end="${response.rating}">
+                                                <c:forEach begin="1" end="${response.rating}">
                                                     <i class="fa-solid fa-star"></i>
                                                 </c:forEach>
                                             </li>
