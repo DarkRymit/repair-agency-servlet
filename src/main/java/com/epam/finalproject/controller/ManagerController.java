@@ -80,7 +80,7 @@ public class ManagerController {
         return MANAGER_VIEW;
     }
     @GetMapping("/responses")
-    String responsesPage(HttpServletRequest request,@RequestParam(required = false) Integer page) {
+    String responsesPage(HttpServletRequest request,@RequestParam(value = "page",required = false) Integer page) {
         int actualPage = Optional.ofNullable(page).orElse(0);
         Page<ReceiptResponseDTO> responses = receiptResponseService.findAll(PageRequest.of(actualPage,5));
         request.setAttribute("responses", responses);

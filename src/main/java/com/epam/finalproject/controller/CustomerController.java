@@ -69,7 +69,7 @@ public class CustomerController {
 
     @GetMapping("/wallets")
     String walletsPage(HttpServletRequest request, UserDetails userDetails,
-            @RequestParam(required = false) Integer page) {
+            @RequestParam(value = "page",required = false) Integer page) {
         int actualPage = Optional.ofNullable(page).orElse(0);
         Page<WalletDTO> wallets = walletService.findAllByUsername(PageRequest.of(actualPage, 5),
                 userDetails.getUsername());
@@ -83,7 +83,7 @@ public class CustomerController {
 
     @GetMapping("/responses")
     String responsesPage(HttpServletRequest request, UserDetails userDetails,
-            @RequestParam(required = false) Integer page) {
+            @RequestParam(value = "page", required = false) Integer page) {
         int actualPage = Optional.ofNullable(page).orElse(0);
         Page<ReceiptResponseDTO> responses = receiptResponseService.findByCustomerUsername(userDetails.getUsername(),
                 PageRequest.of(actualPage, 5));

@@ -32,9 +32,9 @@
             <c:set var="contextPath" value="${pageContext.request.contextPath}" />
             <c:set var="url" value="${fn:substring(requestPath, fn:length(contextPath), fn:length(requestPath))}" />
             <form method="post"
-                    <ext:action path="${url}"/> class="text-center">
+                    <ext:action path="/wallet/create"/> class="text-center">
                 <input hidden name="redirectUrl"
-                       value="${pageContext.request.getAttribute('jakarta.servlet.forward.request_uri')}">
+                       value="${url}">
 
                 <div class="form-group">
                     <label for="name">
@@ -45,7 +45,7 @@
 
                 <div class="form-group">
                     <label for="currency"><fmt:message
-                            key="wallet.create"/> </label>
+                            key="wallet.create.currency"/> </label>
                     <select class="form-control" id="currency" name="currency">
                         <c:forEach var="currency" items="${currencies}">
                             <option value="${currency.code}">

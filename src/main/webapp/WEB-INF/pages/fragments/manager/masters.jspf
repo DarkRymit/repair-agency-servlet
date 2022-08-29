@@ -14,10 +14,10 @@
                     <li class="list-group-item">
                         <label for="sort_select"> <fmt:message key="sort.by"/></label>
                         <select class="form-select" id="sort_select" name="sort">
-                            <option <ext:selected test="${search.sort=='username'&&search.sort==''}"/>>
+                            <option <ext:selected test="${search.sort=='username'&&search.sort==''}"/> value="username">
                                 <fmt:message key="sort.by.username"/>
                             </option>
-                            <option <ext:selected test="${search.sort=='name'}"/> >
+                            <option <ext:selected test="${search.sort=='name'}"/> value="name">
                                 <fmt:message key="sort.by.name"/>
                             </option>
                         </select>

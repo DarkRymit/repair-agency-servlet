@@ -49,7 +49,7 @@
                                            name="status"
                                     <ext:checked test="${search.status.contains('created')}"/>
                                            type="checkbox"
-                                           value="wait">
+                                           value="created">
                                     <label class="form-check-label" for="flexCheckCreated">
                                         <fmt:message key="status.created"/>
                                     </label>

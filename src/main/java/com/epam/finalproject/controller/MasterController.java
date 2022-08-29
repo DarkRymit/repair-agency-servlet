@@ -58,7 +58,7 @@ public class MasterController {
     }
 
     @GetMapping("/responses")
-    String responsesPage(HttpServletRequest request, UserDetails userDetails, @RequestParam(required = false) Integer page) {
+    String responsesPage(HttpServletRequest request, UserDetails userDetails, @RequestParam(value = "page",required = false) Integer page) {
         int actualPage = Optional.ofNullable(page).orElse(0);
         Page<ReceiptResponseDTO> responses = receiptResponseService.findByMasterUsername(userDetails.getUsername(), PageRequest.of(actualPage, 5));
         request.setAttribute("responses", responses);
