@@ -6,7 +6,7 @@
     <a class="btn btn-outline-primary" role="button" <ext:href path="/order/${receipt.id.toString()}"/> >
         <fmt:message key="order.action.view"/>
     </a>
-    <sec:authorize expr="hasRole('MANAGER')">
+    <sec:authorize expr="hasRole('MANAGER') || hasRole('ADMIN')">
         <a class="btn btn-outline-primary" role="button" <ext:href path="/order/${receipt.id.toString()}/update"/> >
             <fmt:message key="order.action.update"/>
         </a>

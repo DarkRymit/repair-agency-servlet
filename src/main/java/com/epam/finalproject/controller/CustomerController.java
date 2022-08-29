@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/customer")
-@PreAuthorize("hasRole('CUSTOMER')")
+@PreAuthorize("hasRole('CUSTOMER') || hasRole('ADMIN')")
 public class CustomerController {
 
     public static final String ACTIVE = "active";

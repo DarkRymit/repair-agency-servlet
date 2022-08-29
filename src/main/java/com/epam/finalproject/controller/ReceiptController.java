@@ -47,7 +47,7 @@ public class ReceiptController {
     }
 
     @GetMapping("/{id}/update")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('MANAGER') || hasRole('ADMIN')")
     String updatePage(HttpServletRequest request, UserDetails userDetails, @PathVariable("id") Long id) {
         ReceiptDTO receipt = receiptService.findById(id);
         List<ReceiptStatusFlowDTO> flows = receiptStatusFlowService.listAllAvailableForUser(receipt.getStatus().getId(),userDetails.getUsername());
@@ -58,7 +58,7 @@ public class ReceiptController {
         return "orderUpdate";
     }
     @PostMapping("/{id}/update")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('MANAGER') || hasRole('ADMIN')")
     String update(@RequestJsonObject @Valid ReceiptUpdateRequest updateRequest, @PathVariable("id") Long id) {
         updateRequest.setId(id);
         ReceiptDTO receipt = receiptService.update(updateRequest);
@@ -117,7 +117,7 @@ public class ReceiptController {
         return "redirect:/order/"+receipt.getId();
     }
     @GetMapping("/create")
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER') || hasRole('ADMIN')")
     String create(HttpServletRequest request, @RequestParam("category") String category) {
         RepairCategoryDTO repairCategory = repairCategoryService.findByKeyName(category);
         List<RepairWorkDTO> repairWorks = repairWorkService.findByCategoryKey(category);

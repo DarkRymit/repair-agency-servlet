@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/master")
-@PreAuthorize("hasRole('MASTER')")
+@PreAuthorize("hasRole('MASTER') || hasRole('ADMIN')")
 public class MasterController {
 
     public static final String ACTIVE = "active";

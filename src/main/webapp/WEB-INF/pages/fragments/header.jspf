@@ -49,15 +49,15 @@
                         </a>
                         <ul aria-labelledby="navbarDropdownMenu1Link"
                             class="dropdown-menu  dropdown-menu-lg-end bg-secondary text-center">
-                            <sec:authorize expr="hasRole('CUSTOMER')">
+                            <sec:authorize expr="hasRole('CUSTOMER')|| hasRole('ADMIN')">
                                 <li><a class="dropdown-item btn nav-link"
                                         <ext:href path="/customer/orders"/>><fmt:message key="header.cabinet"/></a></li>
                             </sec:authorize>
-                            <sec:authorize expr="hasRole('MASTER')">
+                            <sec:authorize expr="hasRole('MASTER')|| hasRole('ADMIN')">
                                 <li><a class="dropdown-item btn nav-link"
                                         <ext:href path="/master/orders"/>><fmt:message key="header.cabinet"/></a></li>
                             </sec:authorize>
-                            <sec:authorize expr="hasRole('MANAGER')">
+                            <sec:authorize expr="hasRole('MANAGER')|| hasRole('ADMIN')">
                                 <li><a class="dropdown-item btn nav-link"
                                         <ext:href path="/manager/orders"/>><fmt:message key="header.cabinet"/></a></li>
                             </sec:authorize>

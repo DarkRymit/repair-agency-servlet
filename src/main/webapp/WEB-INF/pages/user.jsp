@@ -60,7 +60,7 @@
                                             </c:forEach>
                                         </ul>
                                     </li>
-                                    <sec:authorize expr="hasRole('MANAGER')">
+                                    <sec:authorize expr="hasRole('MANAGER') || hasRole('ADMIN')">
                                         <c:if test="${user.roles.stream().map(r -> r.name).filter(n -> n.equals('CUSTOMER')).findFirst().orElse(null) != null}">
                                             <li class="list-group-item">
                                                 <strong><fmt:message key="user.wallets"/></strong>

@@ -23,7 +23,7 @@ public class WalletController {
     }
 
     @PostMapping("/addMoney")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('MANAGER') || hasRole('ADMIN')")
     String addMoney(HttpServletRequest request, @RequestObject @Valid AddMoneyRequest moneyRequest,
             @RequestParam("redirectUrl") String redirectUrl) {
         WalletDTO wallet = walletService.addMoney(moneyRequest);
