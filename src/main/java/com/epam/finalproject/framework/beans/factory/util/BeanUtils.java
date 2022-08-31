@@ -14,7 +14,7 @@ public abstract class BeanUtils {
     private BeanUtils() {
     }
 
-    public static Comparator<BeanDefinition> beanDefinitionComparator = (o1, o2) -> {
+    public static final Comparator<BeanDefinition> beanDefinitionComparator = (o1, o2) -> {
         int o1Order = Optional.ofNullable(o1.getBeanClass().getAnnotation(Order.class))
                 .map(Order::value)
                 .orElse(Integer.MAX_VALUE);

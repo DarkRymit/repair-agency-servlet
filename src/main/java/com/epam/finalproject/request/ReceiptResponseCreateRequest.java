@@ -1,6 +1,9 @@
 package com.epam.finalproject.request;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
@@ -9,9 +12,12 @@ public class ReceiptResponseCreateRequest {
     private Long receiptId;
 
     @NotNull
+    @Size(max = 255)
     private String text;
 
     @NotNull
+    @Max(5)
+    @Min(1)
     private Integer rating;
 
     public ReceiptResponseCreateRequest(Long receiptId, String text, Integer rating) {

@@ -1,17 +1,14 @@
 package com.epam.finalproject.framework.web.listener;
 
 
-import com.epam.finalproject.framework.beans.annotation.Component;
-import com.epam.finalproject.framework.beans.annotation.Configuration;
 import com.epam.finalproject.framework.beans.factory.config.BeanPostProcessor;
 import com.epam.finalproject.framework.beans.factory.config.BeanScope;
 import com.epam.finalproject.framework.beans.factory.exception.BeansException;
 import com.epam.finalproject.framework.beans.factory.support.DefaultBeanDefinition;
+import com.epam.finalproject.framework.beans.factory.util.BeanUtils;
 import com.epam.finalproject.framework.context.ApplicationContext;
 import com.epam.finalproject.framework.context.ManualConfigurableApplicationContext;
 import com.epam.finalproject.framework.scanner.ClassPathScanner;
-import com.epam.finalproject.framework.web.annotation.Controller;
-import com.epam.finalproject.framework.web.annotation.Service;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -37,7 +34,7 @@ public class ContextListener implements ServletContextListener {
                         .supplier(() -> servletContext)
                         .build());
         ClassPathScanner scanner = new ClassPathScanner();
-        Set<Class<?>> classSet = scanner.scan("com.epam.finalproject", aClass -> !aClass.isAnnotation() && (aClass.isAnnotationPresent(Component.class) || aClass.isAnnotationPresent(Configuration.class) || aClass.isAnnotationPresent(Controller.class) || aClass.isAnnotationPresent(Service.class)));
+        Set<Class<?>> classSet = scanner.scan("com.epam.finalproject", BeanUtils::isPossiblyBean);
         log.trace("Found classes {}",classSet);
         classSet.forEach(context::registerBean);
         context.setup();
