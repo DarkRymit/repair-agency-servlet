@@ -7,10 +7,15 @@ import com.epam.finalproject.framework.data.PageImpl;
 import com.epam.finalproject.framework.data.PageRequest;
 import com.epam.finalproject.framework.data.jdbc.JdbcTemplate;
 import com.epam.finalproject.framework.data.sql.SqlAnnotationDrivenRepository;
+import com.epam.finalproject.framework.data.sql.mapping.IdFieldDefinition;
 import com.epam.finalproject.framework.data.sql.mapping.SqlAliasTableNaming;
 import com.epam.finalproject.framework.data.sql.mapping.SqlEntityMapper;
 import com.epam.finalproject.framework.data.sql.mapping.annotation.AnnotationSqlDefinitionReader;
 import com.epam.finalproject.framework.data.sql.query.SqlEntityQueryGenerator;
+import com.epam.finalproject.framework.security.Authentication;
+import com.epam.finalproject.framework.security.GrantedAuthority;
+import com.epam.finalproject.framework.security.support.SecurityContext;
+import com.epam.finalproject.framework.security.support.SecurityContextHolder;
 import com.epam.finalproject.model.entity.*;
 import com.epam.finalproject.model.entity.enums.RoleEnum;
 import com.epam.finalproject.model.search.MasterSearch;
@@ -18,6 +23,7 @@ import com.epam.finalproject.model.search.UserSearch;
 import com.epam.finalproject.repository.UserRepository;
 
 import java.sql.ResultSet;
+import java.time.Instant;
 import java.util.*;
 
 import static com.epam.finalproject.repository.impl.SqlAliasConstants.*;
@@ -186,5 +192,22 @@ public class UserRepositorySQL extends SqlAnnotationDrivenRepository<User> imple
             dynamicPartValue.add("%" + userSearch.getUsername() + "%");
         }
         return constructDynamic(dynamicPart);
+    }
+
+    @Override
+    protected User onInsert(User entity,
+            IdFieldDefinition idFieldDefinition) throws ReflectiveOperationException {
+        entity.setCreationDate(Instant.now());
+        entity.setLastModifiedDate(Instant.now());
+        entity.setLastModifiedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        return super.onInsert(entity, idFieldDefinition);
+    }
+
+    @Override
+    protected User onUpdate(User entity,
+            IdFieldDefinition idFieldDefinition) throws ReflectiveOperationException {
+        entity.setLastModifiedDate(Instant.now());
+        entity.setLastModifiedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        return super.onUpdate(entity, idFieldDefinition);
     }
 }

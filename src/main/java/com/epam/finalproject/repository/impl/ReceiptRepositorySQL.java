@@ -14,6 +14,7 @@ import com.epam.finalproject.framework.data.sql.mapping.SqlEntityDefinition;
 import com.epam.finalproject.framework.data.sql.mapping.SqlEntityMapper;
 import com.epam.finalproject.framework.data.sql.mapping.annotation.AnnotationSqlDefinitionReader;
 import com.epam.finalproject.framework.data.sql.query.SqlEntityQueryGenerator;
+import com.epam.finalproject.framework.security.support.SecurityContextHolder;
 import com.epam.finalproject.model.entity.*;
 import com.epam.finalproject.model.entity.enums.ReceiptStatusEnum;
 import com.epam.finalproject.model.search.ReceiptSearch;
@@ -27,6 +28,7 @@ import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -313,6 +315,23 @@ public class ReceiptRepositorySQL extends SqlAnnotationDrivenRepository<Receipt>
         return entity;
     }
 
+    @Override
+    protected Receipt onInsert(Receipt entity,
+            IdFieldDefinition idFieldDefinition) throws ReflectiveOperationException {
+        entity.setCreationDate(Instant.now());
+        entity.setCreatedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        entity.setLastModifiedDate(Instant.now());
+        entity.setLastModifiedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        return super.onInsert(entity, idFieldDefinition);
+    }
+
+    @Override
+    protected Receipt onUpdate(Receipt entity,
+            IdFieldDefinition idFieldDefinition) throws ReflectiveOperationException {
+        entity.setLastModifiedDate(Instant.now());
+        entity.setLastModifiedBy(SecurityContextHolder.getContext().getAuthentication().getName());
+        return super.onUpdate(entity, idFieldDefinition);
+    }
 
     private SqlAliasTableNaming getSqlAliasTableNaming() {
         SqlAliasTableNaming naming = new SqlAliasTableNaming("r");

@@ -7,6 +7,10 @@ import com.epam.finalproject.framework.data.sql.mapping.SqlEntityMapper;
 import com.epam.finalproject.framework.data.sql.mapping.annotation.AnnotationSqlDefinitionReader;
 import com.epam.finalproject.framework.data.sql.mapping.translators.*;
 import com.epam.finalproject.framework.data.sql.query.SqlEntityQueryGenerator;
+import com.epam.finalproject.framework.security.Authentication;
+import com.epam.finalproject.framework.security.GrantedAuthority;
+import com.epam.finalproject.framework.security.support.SecurityContext;
+import com.epam.finalproject.framework.security.support.SecurityContextHolder;
 import com.epam.finalproject.model.entity.Role;
 import com.epam.finalproject.model.entity.User;
 import com.epam.finalproject.model.entity.enums.RoleEnum;
@@ -20,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.sql.DataSource;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -122,6 +127,28 @@ class UserRepositorySQLTest {
 
     @Test
     void saveShouldReturnUserWithCorrectRoleAndUsername() {
+        SecurityContextHolder.setContext(new SecurityContext(new Authentication() {
+            @Override
+            public Collection<? extends GrantedAuthority> getAuthorities() {
+                return new HashSet<>();
+            }
+
+            @Override
+            public Object getPrincipal() {
+                return null;
+            }
+
+            @Override
+            public boolean isAuthenticated() {
+                return true;
+            }
+
+            @Override
+            public String getName() {
+                return "NoneStriker";
+            }
+        }));
+
         Role role = roleRepository.findByName(RoleEnum.UNVERIFIED).orElseThrow();
         User user = User.builder()
                 .username("NoneStriker")

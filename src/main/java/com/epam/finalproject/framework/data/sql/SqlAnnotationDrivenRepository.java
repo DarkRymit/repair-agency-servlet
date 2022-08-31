@@ -63,7 +63,30 @@ public class SqlAnnotationDrivenRepository<T> implements PagingAndSortingReposit
 
     @Override
     public T save(T entity) {
-        return save(entitySqlDefinition,entity);
+        return onSave(entity);
+    }
+
+    protected T onSave(T entity) {
+        try {
+            T result;
+            IdFieldDefinition idFieldDefinition = getIdColumn(entitySqlDefinition);
+            Method getId = idFieldDefinition.getIdGetter();
+            if (getId.invoke(entity) == null) {
+                result = onInsert(entity, idFieldDefinition);
+            } else {
+                result = onUpdate(entity, idFieldDefinition);
+            }
+            return result;
+        } catch (ReflectiveOperationException e) {
+            throw new DataAccessException(e);
+        }
+    }
+
+    protected T onInsert(T entity, IdFieldDefinition idFieldDefinition) throws ReflectiveOperationException {
+        return onInsert(entitySqlDefinition,entity,idFieldDefinition);
+    }
+    protected T onUpdate(T entity, IdFieldDefinition idFieldDefinition) throws ReflectiveOperationException {
+        return onUpdate(entitySqlDefinition,entity,idFieldDefinition);
     }
 
     protected <S> S save(SqlEntityDefinition<S> definition,S entity) {
