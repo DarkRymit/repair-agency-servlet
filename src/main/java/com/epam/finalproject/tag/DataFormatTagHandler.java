@@ -7,12 +7,21 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
+/**
+ * The type Data format tag handler.
+ */
 public class DataFormatTagHandler  extends TagSupport {
 
+    /**
+     * The Date time formatter.
+     */
     static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
 
     private ZonedDateTime dateTime;
 
+    /**
+     * Instantiates a new Data format tag handler.
+     */
     public DataFormatTagHandler() {
        init();
     }
@@ -27,6 +36,11 @@ public class DataFormatTagHandler  extends TagSupport {
         return SKIP_BODY;
     }
 
+    /**
+     * Sets date time.
+     *
+     * @param dateTime the date time
+     */
     public void setDateTime(ZonedDateTime dateTime) {
         this.dateTime = dateTime;
     }

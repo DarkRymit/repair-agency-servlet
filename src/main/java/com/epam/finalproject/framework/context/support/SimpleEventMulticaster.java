@@ -11,13 +11,27 @@ import com.epam.finalproject.framework.util.ClassUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Simple event multicaster.
+ */
 @Component
 public class SimpleEventMulticaster implements ApplicationEventMulticaster {
 
+    /**
+     * The Bean factory.
+     */
     BeanFactory beanFactory;
 
-    Map<String,ApplicationListener<ApplicationEvent>> applicationListeners = new HashMap<>();
+    /**
+     * The Application listeners.
+     */
+    Map<String, ApplicationListener<ApplicationEvent>> applicationListeners = new HashMap<>();
 
+    /**
+     * Instantiates a new Simple event multicaster.
+     *
+     * @param beanFactory the bean factory
+     */
     @Autowire
     public SimpleEventMulticaster(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
@@ -25,7 +39,7 @@ public class SimpleEventMulticaster implements ApplicationEventMulticaster {
 
     @Override
     public void addApplicationListenerBean(String listenerBeanName) {
-        applicationListeners.put(listenerBeanName,beanFactory.getBean(listenerBeanName,ApplicationListener.class));
+        applicationListeners.put(listenerBeanName, beanFactory.getBean(listenerBeanName, ApplicationListener.class));
     }
 
     @Override
@@ -38,13 +52,18 @@ public class SimpleEventMulticaster implements ApplicationEventMulticaster {
         applicationListeners.clear();
     }
 
+    /**
+     * Performs multicasting only to {@link ApplicationListener} listeners to which satisfy the condition: class of event is assignable by return of method {@link ApplicationListener#listenClass()} class
+     *
+     * @param event the  {@link ApplicationEvent} event object
+     */
     @Override
     public void multicastEvent(ApplicationEvent event) {
-       for(ApplicationListener<ApplicationEvent> listener : applicationListeners.values()){
-           if (ClassUtils.isAssignable(event.getClass(),listener.listenClass())){
-               listener.onApplicationEvent(event);
-           }
-       }
+        for (ApplicationListener<ApplicationEvent> listener : applicationListeners.values()) {
+            if (ClassUtils.isAssignable(event.getClass(), listener.listenClass())) {
+                listener.onApplicationEvent(event);
+            }
+        }
     }
 
 }

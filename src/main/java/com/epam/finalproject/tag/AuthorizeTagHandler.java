@@ -1,6 +1,5 @@
 package com.epam.finalproject.tag;
 
-import com.epam.finalproject.framework.security.Authentication;
 import com.epam.finalproject.framework.security.support.SecurityContextHolder;
 import com.epam.finalproject.framework.security.support.SecurityExpressionSupport;
 import jakarta.servlet.jsp.JspTagException;
@@ -10,13 +9,19 @@ import org.slf4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.epam.finalproject.framework.security.util.SecurityUtils.*;
+import static com.epam.finalproject.framework.security.util.SecurityUtils.evalExpression;
 
+/**
+ * The type Authorize tag handler.
+ */
 public class AuthorizeTagHandler extends ConditionalTagSupport {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(AuthorizeTagHandler.class);
     private String expr;
 
+    /**
+     * Instantiates a new Authorize tag handler.
+     */
     public AuthorizeTagHandler() {
         this.init();
     }
@@ -38,6 +43,11 @@ public class AuthorizeTagHandler extends ConditionalTagSupport {
         this.init();
     }
 
+    /**
+     * Sets expr.
+     *
+     * @param expr the expr
+     */
     public void setExpr(String expr) {
         this.expr = expr;
     }

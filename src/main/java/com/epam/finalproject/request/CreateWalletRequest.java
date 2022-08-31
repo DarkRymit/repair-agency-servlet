@@ -2,15 +2,18 @@ package com.epam.finalproject.request;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
 public class CreateWalletRequest {
 
     @NotBlank
+    @Size(min = 4,max = 20)
     private String name;
 
     @NotBlank
+    @Size(min = 3,max = 3)
     private String currency;
 
     @Override
