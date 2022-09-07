@@ -30,14 +30,14 @@ public class LocaleChangeInterceptor implements HandlerInterceptor {
                 if (!isIgnoreInvalidLocale()) {
                     throw e;
                 }
-                log.debug("Ignoring invalid locale value [" + newLocale + "]: " + e.getMessage());
+                log.debug("Ignoring invalid locale value [{}]: ",newLocale,e);
             }
         }
         return true;
     }
 
     protected Locale parseLocaleValue(String localeValue) {
-        return new Locale(localeValue);
+        return Locale.forLanguageTag(localeValue);
     }
 
     public String getParamName() {

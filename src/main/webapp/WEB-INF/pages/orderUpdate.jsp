@@ -14,7 +14,7 @@
     <meta content="" name="description">
     <meta content="" name="author">
 
-    <title>Receipt</title>
+    <title><fmt:message key="order.title"/></title>
     <ext:fragment name="import/bootstrap"/>
     <ext:fragment name="import/animation"/>
 </head>
@@ -28,23 +28,23 @@
                     <div class="card-body p-0">
                         <div class="row">
                             <div class="col-lg-12 p-5 text-center">
-                                <strong> Order </strong>
+                                <strong> <fmt:message key="order.title"/> </strong>
                                 <form  id="form">
                                     <ul class="list-group">
                                         <li class="list-group-item">
-                                            <strong>ID</strong>
+                                            <strong><fmt:message key="order.id.name"/></strong>
                                             <span>:</span>
                                             <strong id="id">${order.id}</strong>
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>Customer</strong>
+                                            <strong><fmt:message key="order.user.name"/></strong>
                                             <span>:</span>
                                             <a class=" text-dark text-decoration-none"
                                                <ext:href path="/user/${order.user.id.toString()}/profile"/> >
                                                 @${order.user.username}</a>
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>Status</strong>
+                                            <strong><fmt:message key="order.status.name"/></strong>
                                             <span>:</span>
                                             <select aria-label="Default select example" class="form-select text-center"
                                                     id="status">
@@ -59,7 +59,7 @@
                                             </select>
                                         </li>
                                         <li class="list-group-item">
-                                            <label class="form-label" for="masterInput"><strong>Master</strong></label>
+                                            <label class="form-label" for="masterInput"><strong><fmt:message key="order.master.name"/></strong></label>
                                             <div>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text" id="basic-addon1">@</span>
@@ -71,18 +71,18 @@
                                             </div>
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>Category</strong>
+                                            <strong><fmt:message key="order.category.name"/></strong>
                                             <span>:</span>
-                                            ${order.category.keyName}
+                                            ${order.category.name}
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>Total price</strong>
+                                            <strong><fmt:message key="order.totalPrice.name"/></strong>
                                             <span>:</span>
                                             <fmt:formatNumber value="${order.totalPrice}" minFractionDigits="0"/>
                                             <strong>${order.priceCurrency.code}</strong>
                                             <div class="input-group mb-3">
                                                 <label class="input-group-text"
-                                                       for="currency">Currency</label>
+                                                       for="currency"><fmt:message key="order.currency.name"/></label>
                                                 <select class="form-select" id="currency">
                                                     <c:forEach var="currency" items="${currencies}">
                                                         <option <ext:selected test="${order.priceCurrency.code == currency.code}"/> >
@@ -93,12 +93,12 @@
                                             </div>
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>Items</strong><span>:</span>
+                                            <strong><fmt:message key="order.items.name"/></strong><span>:</span>
                                             <br>
                                             <c:forEach var="item" items="${order.items}">
                                             <ul class="list-group" id="works">
                                                 <li class="list-group-item">
-                                                        ${item.repairWork.keyName}
+                                                        ${item.repairWork.name}
                                                     <br>
                                                     <div class="d-none"> ${item.repairWork.id}</div>
                                                     <div class="input-group mb-3">
@@ -115,12 +115,12 @@
                                             </c:forEach>
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>Delivery</strong><span>:</span>
+                                            <strong><fmt:message key="order.delivery.title"/></strong><span>:</span>
                                             <br>
                                             <ul class="list-group">
                                                 <li class="list-group-item">
                                                     <div class="input-group mb-3">
-                                                        <label class="input-group-text" for="country">Country</label>
+                                                        <label class="input-group-text" for="country"><fmt:message key="order.delivery.country.name"/></label>
                                                         <input class="form-control" id="country"
                                                                placeholder="${order.delivery.country}"
                                                                value="${order.delivery.country}"
@@ -129,7 +129,7 @@
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="input-group mb-3">
-                                                        <label class="input-group-text" for="state">State</label>
+                                                        <label class="input-group-text" for="state"><fmt:message key="order.delivery.state.name"/></label>
                                                         <input class="form-control" id="state"
                                                                placeholder="${order.delivery.state}"
                                                                value="${order.delivery.state}"
@@ -138,7 +138,7 @@
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="input-group mb-3">
-                                                        <label class="input-group-text" for="city">City</label>
+                                                        <label class="input-group-text" for="city"><fmt:message key="order.delivery.city.name"/></label>
                                                         <input class="form-control" id="city"
                                                                placeholder="${order.delivery.city}"
                                                                value="${order.delivery.city}"
@@ -147,8 +147,7 @@
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="input-group mb-3">
-                                                        <label class="input-group-text" for="local-address">Local
-                                                            address</label>
+                                                        <label class="input-group-text" for="local-address"><fmt:message key="order.delivery.localAddress.name"/></label>
                                                         <input class="form-control" id="local-address"
                                                                placeholder="${order.delivery.localAddress}"
                                                                value="${order.delivery.localAddress}"
@@ -157,8 +156,7 @@
                                                 </li>
                                                 <li class="list-group-item">
                                                     <div class="input-group mb-3">
-                                                        <label class="input-group-text" for="postal-code">Postal
-                                                            code</label>
+                                                        <label class="input-group-text" for="postal-code"><fmt:message key="order.delivery.postalCode.name"/></label>
                                                         <input class="form-control" id="postal-code"
                                                                placeholder="${order.delivery.postalCode}"
                                                                value="${order.delivery.postalCode}"
@@ -168,24 +166,24 @@
                                             </ul>
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>Created</strong>
+                                            <strong><fmt:message key="order.creationDate.name"/></strong>
                                             <span>:</span>
                                             <strong ><frmt:dataTime dateTime="${order.creationDate}"/></strong>
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>Modified</strong>
+                                            <strong><fmt:message key="order.modifiedDate.name"/></strong>
                                             <span>:</span>
                                             <strong><frmt:dataTime dateTime="${order.lastModifiedDate}"/></strong>
                                         </li>
                                         <li class="list-group-item">
                                             <div class="input-group">
-                                                <strong class="input-group-text">Note</strong>
+                                                <strong class="input-group-text"><fmt:message key="order.note"/></strong>
                                                 <textarea aria-label="Note" class="form-control" id="note"
                                                           maxlength="255" > ${order.note} </textarea>
                                             </div>
                                         </li>
                                     </ul>
-                                    <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+                                    <button type="submit" class="btn btn-primary" id="submit"><fmt:message key="order.create.submit"/></button>
                                 </form>
                             </div>
                         </div>

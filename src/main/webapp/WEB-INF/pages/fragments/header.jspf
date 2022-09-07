@@ -23,9 +23,9 @@
                     </a>
                     <ul aria-labelledby="navbarDropdownMenu1Link"
                         class="dropdown-menu  dropdown-menu-lg-end bg-secondary text-center">
-                        <li><a class="dropdown-item" <ext:hrefReplaceParam name='lang' value='uk'/> ><fmt:message key="header.lang.uk"/></a>
+                        <li><a class="dropdown-item" <ext:hrefReplaceParam name='lang' value='uk-UA'/> ><fmt:message key="header.lang.uk"/></a>
                         </li>
-                        <li><a class="dropdown-item" <ext:hrefReplaceParam name='lang' value='en'/> ><fmt:message key="header.lang.en"/></a></li>
+                        <li><a class="dropdown-item" <ext:hrefReplaceParam name='lang' value='en-US'/> ><fmt:message key="header.lang.en"/></a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown py-lg-0 pb-1">

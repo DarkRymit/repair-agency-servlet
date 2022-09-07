@@ -7,7 +7,6 @@ import com.epam.finalproject.framework.web.annotation.*;
 import com.epam.finalproject.request.AddMoneyRequest;
 import com.epam.finalproject.request.CreateWalletRequest;
 import com.epam.finalproject.service.WalletService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 
@@ -24,7 +23,7 @@ public class WalletController {
 
     @PostMapping("/addMoney")
     @PreAuthorize("hasRole('MANAGER') || hasRole('ADMIN')")
-    String addMoney(HttpServletRequest request, @RequestObject @Valid AddMoneyRequest moneyRequest,
+    String addMoney(@RequestObject @Valid AddMoneyRequest moneyRequest,
             @RequestParam("redirectUrl") String redirectUrl) {
         WalletDTO wallet = walletService.addMoney(moneyRequest);
         log.trace("Wallet updated {}", wallet);
@@ -33,7 +32,7 @@ public class WalletController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('CUSTOMER')")
-    String createWallet(HttpServletRequest request, @RequestObject @Valid CreateWalletRequest createWalletRequest,
+    String createWallet(@RequestObject @Valid CreateWalletRequest createWalletRequest,
             @RequestParam("redirectUrl") String redirectUrl,
             UserDetails userDetails) {
         WalletDTO wallet = walletService.create(createWalletRequest,userDetails.getUsername());

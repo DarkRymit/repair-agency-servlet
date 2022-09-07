@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="locale" value="${sessionScope.get('SessionLocaleResolver.LOCALE')}" />
 
-<fmt:setLocale value="${locale.language}"/>
+<fmt:setLocale value="${locale}"/>
 
 <fmt:setBundle basename="messages"/>
 

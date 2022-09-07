@@ -27,7 +27,7 @@
                     <div class="card-body p-0">
                         <div class="row">
                             <div class="col-lg-12 p-5 text-center">
-                                <strong> Order </strong>
+                                <strong> <fmt:message key="order.title"/> </strong>
                                 <ul class="list-group">
                                     <li class="list-group-item">
                                         <strong><fmt:message key="order.id.name"/></strong>
