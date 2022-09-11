@@ -1,4 +1,4 @@
-package com.epam.finalproject.framework.web.listener;
+package com.epam.finalproject;
 
 
 import com.epam.finalproject.framework.beans.factory.config.BeanPostProcessor;
