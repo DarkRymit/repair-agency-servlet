@@ -55,7 +55,7 @@
                                         <ul class="list-group">
                                             <c:forEach var="role" items="${user.roles}">
                                                 <li class="list-group-item">
-                                                    <strong>${role.name}</strong>
+                                                    <ext:roleGet var="${role.name}"/>
                                                 </li>
                                             </c:forEach>
                                         </ul>

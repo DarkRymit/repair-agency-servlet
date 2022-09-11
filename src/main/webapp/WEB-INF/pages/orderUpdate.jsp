@@ -103,7 +103,7 @@
                                                     <div class="d-none"> ${item.repairWork.id}</div>
                                                     <div class="input-group mb-3">
                                                         <input class="form-control price"
-                                                               placeholder="${item.priceAmount}"
+                                                               placeholder=<fmt:formatNumber value="${item.priceAmount}" minFractionDigits="0"/>
                                                                value="${item.priceAmount}"
                                                                type="number">
                                                         <span class="input-group-text" id="basic-addon2"><strong>

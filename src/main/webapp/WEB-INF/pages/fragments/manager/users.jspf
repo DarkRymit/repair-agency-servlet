@@ -70,7 +70,7 @@
                         <td>
                             <ul class="list-group">
                                 <c:forEach var="role" items="${user.roles}">
-                                    <li class="list-group-item">${role.name}</li>
+                                    <li class="list-group-item"><ext:roleGet var="${role.name}"/></li>
                                 </c:forEach>
                             </ul>
                         </td>

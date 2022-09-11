@@ -2,6 +2,7 @@
 <jsp:useBean id="search" scope="request" type="com.epam.finalproject.request.search.MasterSearchRequest"/>
 <jsp:useBean id="masters" scope="request"
              type="com.epam.finalproject.framework.data.Page<com.epam.finalproject.dto.UserDTO>"/>
+
 <div class="container ms-0">
     <div class="row">
         <div class="col-2">
@@ -70,7 +71,7 @@
                         <td>
                             <ul class="list-group">
                                 <c:forEach var="role" items="${master.roles}">
-                                    <li class="list-group-item">${role.name}</li>
+                                    <li class="list-group-item"><ext:roleGet var="${role.name}"/></li>
                                 </c:forEach>
                             </ul>
                         </td>
