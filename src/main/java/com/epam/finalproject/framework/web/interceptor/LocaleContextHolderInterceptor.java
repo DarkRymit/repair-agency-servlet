@@ -6,15 +6,11 @@ import com.epam.finalproject.framework.web.RequestHandler;
 import com.epam.finalproject.framework.web.servlet.HandlerInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
 
 public class LocaleContextHolderInterceptor implements HandlerInterceptor {
 
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(LocaleContextHolderInterceptor.class);
     private LocaleContextResolver localeContextResolver;
 
-    public LocaleContextHolderInterceptor() {
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, RequestHandler handler) {
@@ -22,6 +18,12 @@ public class LocaleContextHolderInterceptor implements HandlerInterceptor {
         localeContextResolver.setLocaleContext(request,response,context);
         LocaleContextHolder.setLocaleContext(context);
         return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, RequestHandler handler,
+            Exception ex) {
+        LocaleContextHolder.setLocaleContext(null);
     }
 
     public LocaleContextResolver getLocaleContextResolver() {

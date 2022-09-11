@@ -48,6 +48,7 @@ public class DataSourceTransactionManager implements PlatformTransactionManager{
 
         TransactionSynchronizationManager.unbindResource(dataSource);
         TransactionSynchronizationManager.setActualTransactionActive(false);
+        TransactionSynchronizationManager.clear();
     }
 
     @Override
@@ -64,6 +65,7 @@ public class DataSourceTransactionManager implements PlatformTransactionManager{
 
         TransactionSynchronizationManager.unbindResource(dataSource);
         TransactionSynchronizationManager.setActualTransactionActive(false);
+        TransactionSynchronizationManager.clear();
     }
 
     @Override
