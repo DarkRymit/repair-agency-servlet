@@ -40,7 +40,7 @@
                     <label for="name">
                         <fmt:message key="wallet.create.name"/>
                     </label>
-                    <input type="text" id="name" name="name" class="form-control" required>
+                    <input type="text" id="name" name="name" class="form-control" required minlength="4" maxlength="20">
                 </div>
 
                 <div class="form-group">

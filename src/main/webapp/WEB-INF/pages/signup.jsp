@@ -35,7 +35,7 @@
                                   class="user text-center">
                                 <div class="form-floating mb-2">
                                     <input type="text" id="username" name="username"
-                                           class="form-control form-control-user mb-2" required placeholder="Username">
+                                           class="form-control form-control-user mb-2" required minlength="8" maxlength="14" placeholder="Username">
                                     <label for="username"><fmt:message key="user.username"/></label>
                                 </div>
                                 <c:if test="${requestScope.usernameError}">
@@ -54,12 +54,12 @@
                                 <div class="row row-cols-2 gx-2 mb-2">
                                     <div class="form-floating">
                                         <input type="text"  id="firstName" name="firstName"
-                                               class="form-control form-control-user" required placeholder="First Name">
+                                               class="form-control form-control-user" required minlength="1" maxlength="20" placeholder="First Name">
                                         <label for="firstName"><fmt:message key="user.firstName"/></label>
                                     </div>
                                     <div class="form-floating">
                                         <input type="text"  id="lastName" name="lastName"
-                                               class="form-control form-control-user" required placeholder="Last Name">
+                                               class="form-control form-control-user" required minlength="1" maxlength="20" placeholder="Last Name">
                                         <label for="lastName"><fmt:message key="user.lastName"/></label>
                                     </div>
                                 </div>
@@ -89,7 +89,7 @@
                                 <div class="form-floating  mb-2">
                                     <div class="form-floating">
                                         <input type="password"  id="password" name="password"
-                                               class="form-control form-control-user" required placeholder="Password">
+                                               class="form-control form-control-user" required minlength="8" maxlength="14" placeholder="Password">
                                         <label for="password"><fmt:message key="user.password"/></label>
                                     </div>
                                 </div>

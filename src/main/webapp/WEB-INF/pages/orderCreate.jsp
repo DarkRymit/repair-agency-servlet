@@ -64,7 +64,7 @@
                                                         <strong class="input-group-text"><fmt:message
                                                                 key="order.delivery.country.name"/></strong>
                                                         <input type="text" aria-label="Country" class="form-control"
-                                                               id="country">
+                                                               id="country" required>
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">
@@ -80,7 +80,7 @@
                                                         <strong class="input-group-text"><fmt:message
                                                                 key="order.delivery.city.name"/></strong>
                                                         <input type="text" aria-label="City" class="form-control"
-                                                               id="city">
+                                                               id="city" required>
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">
@@ -88,7 +88,7 @@
                                                         <strong class="input-group-text"><fmt:message
                                                                 key="order.delivery.localAddress.name"/></strong>
                                                         <input type="text" aria-label="Local address"
-                                                               class="form-control" id="local-address">
+                                                               class="form-control" id="local-address" required>
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">

@@ -66,7 +66,7 @@
                                                     <input class="form-control" id="masterInput"
                                                            placeholder="${order.master == null? null: order.master.username}"
                                                            value="${order.master == null? null: order.master.username}"
-                                                           type="text">
+                                                           type="text" minlength="8" maxlength="14">
                                                 </div>
                                             </div>
                                         </li>
@@ -105,7 +105,7 @@
                                                         <input class="form-control price"
                                                                placeholder=<fmt:formatNumber value="${item.priceAmount}" minFractionDigits="0"/>
                                                                value="${item.priceAmount}"
-                                                               type="number">
+                                                               type="number" min="0">
                                                         <span class="input-group-text" id="basic-addon2"><strong>
                                                                 ${order.priceCurrency.code}
                                                         </strong></span>
@@ -124,7 +124,7 @@
                                                         <input class="form-control" id="country"
                                                                placeholder="${order.delivery.country}"
                                                                value="${order.delivery.country}"
-                                                               type="text">
+                                                               type="text" required>
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">
@@ -142,7 +142,7 @@
                                                         <input class="form-control" id="city"
                                                                placeholder="${order.delivery.city}"
                                                                value="${order.delivery.city}"
-                                                               type="text">
+                                                               type="text" required>
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">
@@ -151,7 +151,7 @@
                                                         <input class="form-control" id="local-address"
                                                                placeholder="${order.delivery.localAddress}"
                                                                value="${order.delivery.localAddress}"
-                                                               type="text">
+                                                               type="text" required>
                                                     </div>
                                                 </li>
                                                 <li class="list-group-item">

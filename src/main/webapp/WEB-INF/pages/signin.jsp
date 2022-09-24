@@ -50,12 +50,12 @@
                                         <div class="form-group">
                                             <div class="form-floating mb-2">
                                                 <input type="text" id="username" name="username"
-                                                       class="form-control mb-2" required placeholder="Username">
+                                                       class="form-control mb-2" required minlength="8" maxlength="14" placeholder="Username">
                                                 <label for="username"><fmt:message key="signIn.username"/></label>
                                             </div>
                                             <div class="form-floating mb-2">
                                                 <input type="password" id="password" name="password"
-                                                       class="form-control" required placeholder="Password">
+                                                       class="form-control" required minlength="8" maxlength="14" placeholder="Password">
                                                 <label for="password"><fmt:message key="signIn.password"/></label>
                                             </div>
                                         </div>
